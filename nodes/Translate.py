@@ -98,7 +98,7 @@ class TranslateNode:
         payload = {
             "appid": self.appid,
             "q": query,
-            "from": lang_list[from_lang],
+            "from": lang_list[from_lang] if from_lang in lang_list else "auto",
             "to": lang_list[to_lang],
             "salt": salt,
             "sign": sign,
