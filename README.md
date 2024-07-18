@@ -15,10 +15,10 @@
 ```
 
 ### 获取百度翻译平台的APPID和秘钥
-1. 登录百度翻译平台[https://api.fanyi.baidu.com/manage/developer]，在开发者中心可以获得个人的APPID和秘钥。
+1. 登录百度翻译平台[ https://api.fanyi.baidu.com/manage/developer ]，在开发者中心可以获得个人的APPID和秘钥。
 ![alt text](docs/images/userinfo.png)
 
-2. 访问：https://api.fanyi.baidu.com/product/11 ，开通“通用文本翻译API”。
+2. 访问[ https://api.fanyi.baidu.com/product/11 ]，开通“通用文本翻译API”。
 ![alt text](docs/images/api_service.png)
 
 ## 工作流示例（图片含工作流）
