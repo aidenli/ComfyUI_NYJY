@@ -1,7 +1,7 @@
 {
     "Baidu": {
-        "AppId": "20200308000394947",
-        "Secret": "eNpMv1FmuLKO5_1FfzmC"
+        "AppId": "APPID",
+        "Secret": "SECRET"
     },
     "joytag": {
         "hf_project": "fancyfeast/joytag",
