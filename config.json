@@ -4,7 +4,6 @@
         "Secret": "SECRET"
     },
     "joytag": {
-        "hf_project": "fancyfeast/joytag",
-        "model_download": "https://hf-mirror.com/fancyfeast/joytag/tree/main"
+        "hf_project": "fancyfeast/joytag"
     }
 }
