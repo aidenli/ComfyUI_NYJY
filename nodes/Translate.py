@@ -3,9 +3,7 @@ import requests
 import random
 import json
 from hashlib import md5
-
-current_path = os.path.abspath(os.path.dirname(__file__))
-config_path = os.path.join(current_path, "../config.json")
+from .config import LoadConfig
 
 # 语言列表
 lang_list = {
@@ -38,24 +36,11 @@ lang_list = {
 }
 
 
-def read_config():
-    config_data = {}
-    try:
-        with open(config_path, "r", encoding="utf-8") as fd:
-            config_data = json.load(fd)
-            appid = config_data["Baidu"]["AppId"]
-            appkey = config_data["Baidu"]["Secret"]
-            return (appid, appkey)
-    except Exception as e:
-        print(e)
-    return ("", "")
-
-
 class TranslateNode:
     def __init__(self):
-        (appid, appkey) = read_config()
-        self.appid = appid
-        self.appkey = appkey
+        config_data = LoadConfig()
+        self.appid = config_data["Baidu"]["AppId"]
+        self.appkey = config_data["Baidu"]["Secret"]
         pass
 
     @classmethod
@@ -77,7 +62,7 @@ class TranslateNode:
     )
     FUNCTION = "run"
     OUTPUT_NODE = True
-    CATEGORY = "NYJY"
+    CATEGORY = "NYJY/text"
 
     def run(self, from_lang, to_lang, text, clip=None):
         endpoint = "http://api.fanyi.baidu.com"
@@ -109,11 +94,14 @@ class TranslateNode:
         result = r.json()
 
         if "error_code" in result:
-            print(result)
+            print(f"[NYJY_Translate] exec translate failed：{json.dumps(result)}")
             return
 
-        translate_str = result["trans_result"][0]["dst"]
-        print(result)
+        arr_res = []
+        for item in result["trans_result"]:
+            arr_res.append(item["dst"])
+        translate_str = ("\n").join(arr_res)
+
         if clip is None:
             return (translate_str, [[]])
 

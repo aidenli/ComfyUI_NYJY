@@ -3,8 +3,9 @@
 ### Translate -- 翻译节点，基于百度翻译接口，支持多语言
 
 ## 使用方法
-### 修改配置
-修改节点根目录下config.josn的内容
+### 1. TranslateNode
+#### 1.1 修改配置
+修根目录下config.josn的内容（如果没有config.json，则手动创建一个），路径为：ComfyUI_NYJY
 ```
 {
     "Baidu": {
@@ -14,12 +15,27 @@
 }
 ```
 
-### 获取百度翻译平台的APPID和秘钥
-1. 登录百度翻译平台[ https://api.fanyi.baidu.com/manage/developer ]，在开发者中心可以获得个人的APPID和秘钥。
+#### 1.2 获取百度翻译平台的APPID和秘钥
+(1) 登录百度翻译平台[ https://api.fanyi.baidu.com/manage/developer ]，在开发者中心可以获得个人的APPID和秘钥。
 ![alt text](docs/images/userinfo.png)
 
-2. 访问[ https://api.fanyi.baidu.com/product/11 ]，开通“通用文本翻译API”。
+(2) 访问[ https://api.fanyi.baidu.com/product/11 ]，开通“通用文本翻译API”。
 ![alt text](docs/images/api_service.png)
 
-## 工作流示例（图片含工作流）
+#### 1.3 工作流示例（图片含工作流）
 ![alt text](docs/images/workflow-translate.png)
+
+### 2. JoyTagNode
+#### 2.1 JoyTag基本信息
+原项目github地址：https://github.com/fpgaminer/joytag
+
+该插件运行时会自动下载所需的模型，下载模型的所有相关文件将存放到：[comfyui根目录]/costom_nodes/ComfyUI_NYJY/models/joytag中。
+
+如果使用手动下载，需要自己创建目录。模型下载地址：https://huggingface.co/fancyfeast/joytag/tree/main （model.onnx文件可以不用下载）
+
+#### 2.2 节点参数说明
+
+THRESHOLD：浮点类型，范围 0.1 - 1，值越小，产生的tag数量越多。
+
+#### 2.3 工作流示例（图片含工作流）
+![alt text](docs/images/workflow-joytag.png)

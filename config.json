@@ -1,6 +1,10 @@
 {
     "Baidu": {
-        "AppId": "PUT YOUR APPID HERE",
-        "Secret": "PUT YOUR SECRET HERE"
+        "AppId": "20200308000394947",
+        "Secret": "eNpMv1FmuLKO5_1FfzmC"
+    },
+    "joytag": {
+        "hf_project": "fancyfeast/joytag",
+        "model_download": "https://hf-mirror.com/fancyfeast/joytag/tree/main"
     }
 }
