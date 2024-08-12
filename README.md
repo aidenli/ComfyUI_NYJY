@@ -1,9 +1,10 @@
 # ComfyUI_NYJY
 ## 节点列表
 ### Translate -- 翻译节点，基于百度翻译接口，支持多语言
+### JoyTag -- 图片转tags
 
 ## 使用方法
-### 1. TranslateNode
+### 1. Translate
 #### 1.1 修改配置
 修根目录下config.josn的内容（如果没有config.json，则手动创建一个），路径为：ComfyUI_NYJY
 ```
@@ -25,7 +26,7 @@
 #### 1.3 工作流示例（图片含工作流）
 ![alt text](docs/images/workflow-translate.png)
 
-### 2. JoyTagNode
+### 2. JoyTag
 #### 2.1 JoyTag基本信息
 原项目github地址：https://github.com/fpgaminer/joytag
 
