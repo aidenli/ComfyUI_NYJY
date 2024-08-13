@@ -1,5 +1,6 @@
-/models/
+/models/joytag/
 /config.json
+*.safetensors
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

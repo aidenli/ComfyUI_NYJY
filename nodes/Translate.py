@@ -69,7 +69,7 @@ class TranslateNode:
         path = "/api/trans/vip/translate"
         url = endpoint + path
 
-        query = text
+        query = " ".join(text.split("_"))
 
         # Generate salt and sign
         def make_md5(s, encoding="utf-8"):

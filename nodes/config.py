@@ -29,18 +29,18 @@ def LoadConfig():
     global config_data
     global config_path
     global current_path
-    if config_data is None:
-        config_data = config_template.copy()
 
-        if os.path.exists(config_path):
-            with open(config_path, "r") as f:
-                content = f.read()
-                config_data = json.loads(content)
-                # 合并最新的配置项（当config_template有变动的时候）
-                config_data = merge_config(config_data, config_template)
+    config_data = config_template.copy()
 
-        with open(config_path, "w") as f:
-            f.write(json.dumps(config_data, indent=4))
+    if os.path.exists(config_path):
+        with open(config_path, "r") as f:
+            content = f.read()
+            config_data = json.loads(content)
+            # 合并最新的配置项（当config_template有变动的时候）
+            config_data = merge_config(config_data, config_template)
 
-        config_data["base_path"] = os.path.join(current_path, "../")
+    with open(config_path, "w") as f:
+        f.write(json.dumps(config_data, indent=4))
+
+    config_data["base_path"] = os.path.join(current_path, "../")
     return config_data
