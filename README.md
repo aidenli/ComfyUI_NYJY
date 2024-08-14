@@ -55,6 +55,7 @@ safe_mode：安全模式，自动过滤tag中血腥、色情等提示词（词�
 #### 2.3 工作流示例（图片含工作流）
 
 ![alt text](docs/images/image1.png)
+
 感谢WARIO WORLD提供的图片
 
 ![alt text](docs/images/workflow-joytag.png)
