@@ -1,6 +1,6 @@
 from .nodes.Translate import TranslateNode
 from .nodes.JoyTag.JoyTag import JoyTagNode
-from .nodes.JoyCaption.JoyCaption import LoadLlamaModelNode, JoyCaptionNode
+from .nodes.JoyCaption.JoyCaption import JoyCaptionNode
 
 NODE_CLASS_MAPPINGS = {
     "Translate": TranslateNode,

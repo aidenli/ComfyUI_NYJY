@@ -40,52 +40,32 @@ class ImageAdapter(nn.Module):
 
 class LlamaModel:
     def __init__(self, model_id):
-        MODEL_PATH = os.path.join(config_data["base_path"], f"./models/{model_id}")
+        model_name = dict_models[model_id]
+        MODEL_PATH = os.path.join(config_data["base_path"], f"./models/{model_name}")
+
         if not os.path.exists(MODEL_PATH):
-            print_log(f"start download LLM: {model_id}")
-            snapshot_download(repo_id=model_id, local_dir=MODEL_PATH)
+            MODEL_PATH = os.path.join(
+                config_data["base_path"], f"../../models/llm/{model_id}"
+            )
+            if not os.path.exists(MODEL_PATH):
+                print_log(f"start download LLM: {model_name}")
+                snapshot_download(repo_id=model_name, local_dir=MODEL_PATH)
 
         # LLM
-        print_log(f"Loading LLM: {model_id}")
+        print_log(f"Loading LLM: {model_name}")
         text_model = AutoModelForCausalLM.from_pretrained(
             MODEL_PATH, device_map="auto", torch_dtype=torch.bfloat16
         )
         text_model.eval()
 
         # Tokenizer
-        print_log(f"Loading tokenizer: {model_id}")
+        print_log(f"Loading tokenizer: {model_name}")
         tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, use_fast=False)
         assert isinstance(tokenizer, PreTrainedTokenizer) or isinstance(
             tokenizer, PreTrainedTokenizerFast
         ), f"Tokenizer is of type {type(tokenizer)}"
         self.text_model = text_model
         self.tokenizer = tokenizer
-
-
-class LoadLlamaModelNode:
-    def __init__(self):
-        pass
-
-    @classmethod
-    def INPUT_TYPES(self):
-        return {
-            "required": {
-                "model_id": (
-                    [
-                        "Meta-Llama-3.1-8B-bnb-4bit",
-                    ],
-                    {"default": "Meta-Llama-3.1-8B-bnb-4bit"},
-                )
-            }
-        }
-
-    CATEGORY = "NYJY"
-    RETURN_TYPES = ("LlamaModel",)
-    FUNCTION = "load"
-
-    def load(self, model_id):
-        model = LlamaModel(dict_models[model_id])
-        return (model,)
 
 
 class JoyCaptionNode:
@@ -140,7 +120,7 @@ class JoyCaptionNode:
     ):
         if self.llama_model is None:
             # load LLM
-            self.llama_model = LlamaModel(dict_models[model])
+            self.llama_model = LlamaModel(model)
 
         if self.clip_model is None:
             # load clip
@@ -148,8 +128,14 @@ class JoyCaptionNode:
                 config_data["base_path"], f"models/clip/{CLIP_MODEL}"
             )
             if not os.path.exists(CLIP_PATH):
-                print_log(f"start download clip: {CLIP_MODEL}")
-                snapshot_download(repo_id=CLIP_MODEL, local_dir=CLIP_PATH)
+                CLIP_PATH = os.path.join(
+                    config_data["base_path"],
+                    f"../../models/clip/siglip-so400m-patch14-384",
+                )
+
+                if not os.path.exists(CLIP_PATH):
+                    print_log(f"start download clip: {CLIP_MODEL}")
+                    snapshot_download(repo_id=CLIP_MODEL, local_dir=CLIP_PATH)
 
             # Load CLIP
             print_log(f"Loading CLIP: {CLIP_MODEL}")
