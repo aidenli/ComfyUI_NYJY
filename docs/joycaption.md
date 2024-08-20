@@ -6,7 +6,7 @@
 
 - CLIP模型：google/siglip-so400m-patch14-384，下载后将存放到此路径：[comfyui_project]/models/clip/siglip-so400m-patch14-384
 
-- 大语言模型：unsloth/Meta-Llama-3.1-8B-bnb-4bit，下载后将存放到此路径：[comfyui_project]/models/llm//Meta-Llama-3.1-8B-bnb-4bit
+- 大语言模型：unsloth/Meta-Llama-3.1-8B-bnb-4bit，下载后将存放到此路径：[comfyui_project]/models/llm/Meta-Llama-3.1-8B-bnb-4bit
 
 #### 2 节点参数说明
 
