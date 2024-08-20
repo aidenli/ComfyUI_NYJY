@@ -10,9 +10,11 @@
 
 #### 2 节点参数说明
 
+![joy caption节点](images/joycaption-node.png)
+
 image：需要反推的图片。
 
-描述提示词：用于指定需要提取图片的何种特征，没有特别需求的情况下次字段无需修改。
+提示词：用于指定需要提取图片的何种特征，没有特别需求的情况下此字段无需修改。
 
 model：大语言模型，目前只有一个选项，无需修改
 
@@ -26,7 +28,7 @@ clear_cache：运行该插件需要加载大语言模型和CLIP模型，在我�
 
 #### 3 工作流示例（图片含工作流）
 
-![alt text](images/joycaption.png)
+![工作流](images/joycaption.png)
 
 
-![alt text](images/joycaption-2.png)
+![图片对比](images/joycaption-2.png)
