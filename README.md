@@ -1,7 +1,7 @@
 # ComfyUI_NYJY
 ## 更新日志
 #### 2024-08-20
-- 增加JoyCaption节点（joy-caption项目地址：https://huggingface.co/spaces/fancyfeast/joy-caption-pre-alpha）
+- 增加JoyCaption节点（joy-caption项目地址：https://huggingface.co/spaces/fancyfeast/joy-caption-pre-alpha ）
 
 #### 2024-08-14
 - 解决了模型重复下载问题
