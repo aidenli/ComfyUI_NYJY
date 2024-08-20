@@ -1,5 +1,7 @@
 import os
 import json
+from inspect import currentframe, stack, getmodule
+import time
 
 config_template = {
     "Baidu": {"AppId": "", "Secret": ""},
@@ -44,3 +46,10 @@ def LoadConfig():
 
     config_data["base_path"] = os.path.join(current_path, "../")
     return config_data
+
+
+def print_log(str_msg):
+    # f_current_line = str(currentframe().f_back.f_lineno)  # 哪一行调用的此函数
+    # mod = getmodule(stack()[1][0])  # 调用函数的信息
+    str_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"[NYJY][{str_time}][{stack()[1][1]}, line: {stack()[1][2]}]: {str_msg}")

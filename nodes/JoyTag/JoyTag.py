@@ -49,7 +49,7 @@ class JoyTagNode:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("tags",)
     FUNCTION = "run"
-
+    OUTPUT_NODE = False
     CATEGORY = "NYJY/image"
 
     def prepare_image(self, image: Image.Image, target_size: int) -> torch.Tensor:

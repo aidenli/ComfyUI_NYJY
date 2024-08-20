@@ -61,7 +61,7 @@ class TranslateNode:
         "CONDITIONING",
     )
     FUNCTION = "run"
-    OUTPUT_NODE = True
+    OUTPUT_NODE = False
     CATEGORY = "NYJY/text"
 
     def run(self, from_lang, to_lang, text, clip=None):
