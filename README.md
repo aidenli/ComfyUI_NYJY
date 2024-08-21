@@ -16,3 +16,18 @@
 #### [JoyTag -- 反推图片，输出tags](docs/joytag.md)
 
 #### [JoyCaption -- 反推图片，输出自然语言](docs/joycaption.md)
+
+## 安装方法（两种方式）
+### 1. 通过ComfyUI Manager安装。
+
+打开ComfyUI Manager，点击“Install via Git URL”按钮
+
+在弹出的对话框中填入：https://github.com/aidenli/ComfyUI_NYJY
+
+![安装](docs/images/install.jpg)
+
+### 2. 手动拷贝
+访问项目地址：https://github.com/aidenli/ComfyUI_NYJY
+点击Code按钮，在弹出的浮层中点击“Download ZIP”。下载后解压到 [你的ConmfyUI目录]/custom_nodes/
+
+![安装](docs/images/install-2.jpg)
