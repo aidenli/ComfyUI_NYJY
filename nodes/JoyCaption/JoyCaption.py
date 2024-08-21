@@ -100,7 +100,7 @@ class JoyCaptionNode:
             }
         }
 
-    CATEGORY = "NYJY/VLM"
+    CATEGORY = "NYJY/image"
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("captions",)
     FUNCTION = "run"
