@@ -9,10 +9,10 @@ NODE_CLASS_MAPPINGS = {
     "JoyCaption": JoyCaptionNode,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Translate": "Translate (NYJY)",
-    "JoyTag": "JoyTag (NYJY)",
+    "Translate": "Translate[文本翻译] (NYJY)",
+    "JoyTag": "JoyTag[图片反推，输出Tags] (NYJY)",
     # "LoadLlamaModel": "LoadLlamaModel (NYJY)",
-    "JoyCaption": "JoyCaption (NYJY)",
+    "JoyCaption": "JoyCaption[图片反推，输出自然语言] (NYJY)",
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
