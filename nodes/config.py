@@ -44,7 +44,10 @@ def LoadConfig():
     with open(config_path, "w") as f:
         f.write(json.dumps(config_data, indent=4))
 
-    config_data["base_path"] = os.path.join(current_path, "../")
+    current_dir = os.path.dirname(__file__)
+    config_data["base_path"] = os.path.dirname(
+        current_dir
+    )  # os.path.join(current_path, "../")
     return config_data
 
 
