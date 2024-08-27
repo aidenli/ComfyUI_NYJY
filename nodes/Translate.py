@@ -49,7 +49,10 @@ class TranslateNode:
             "required": {
                 "from_lang": (["自动"] + list(lang_list.keys()), {"default": "自动"}),
                 "to_lang": (list(lang_list.keys()), {"default": "英语"}),
-                "text": ("STRING", {"default": "", "multiline": True}),
+                "text": (
+                    "STRING",
+                    {"default": "", "multiline": True, "dynamicPrompts": True},
+                ),
             },
             "optional": {
                 "clip": ("CLIP",),
