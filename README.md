@@ -1,7 +1,10 @@
 # ComfyUI_NYJY
 ## 更新日志
 #### 2024-09-01
-- 支持Google翻译
+- 支持Google翻译。更新的小伙伴需要安装一个新的包：pygtrans。
+```bash
+[comfyui根目录]\python_embeded\python.exe -m pip install pygtrans
+```
 
 #### 2024-08-20
 - 增加JoyCaption节点（joy-caption项目地址：https://huggingface.co/spaces/fancyfeast/joy-caption-pre-alpha ）
