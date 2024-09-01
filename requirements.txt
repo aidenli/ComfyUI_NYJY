@@ -8,3 +8,4 @@ accelerate
 transformers>=4.43.3
 sentencepiece
 bitsandbytes==0.43.3
+pygtrans

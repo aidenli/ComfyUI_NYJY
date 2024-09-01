@@ -9,6 +9,7 @@ config_template = {
         "model_download": "https://hf-mirror.com/fancyfeast/joytag/tree/main",
         "hf_project": "fancyfeast/joytag",
     },
+    "Google": {"proxy": "http://localhost:10809"},
 }
 
 current_path = os.path.abspath(os.path.dirname(__file__))

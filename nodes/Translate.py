@@ -4,9 +4,10 @@ import random
 import json
 from hashlib import md5
 from .config import LoadConfig
+from pygtrans import Translate
 
 # 语言列表
-lang_list = {
+baidu_lang_list = {
     "中文": "zh",
     "英语": "en",
     "日语": "jp",
@@ -35,24 +36,55 @@ lang_list = {
     "越南语": "vie",
 }
 
+google_lang_list = {
+    "中文": "zh",
+    "英语": "en",
+    "日语": "ja",
+    "韩语": "ko",
+    "法语": "fr",
+    "西班牙语": "es",
+    "泰语": "th",
+    "阿拉伯语": "ar",
+    "俄语": "ru",
+    "葡萄牙语": "pt",
+    "德语": "de",
+    "意大利语": "it",
+    "希腊语": "el",
+    "荷兰语": "nl",
+    "波兰语": "pl",
+    "保加利亚语": "bg",
+    "爱沙尼亚语": "et",
+    "丹麦语": "da",
+    "芬兰语": "fi",
+    "捷克语": "cs",
+    "罗马尼亚语": "ro",
+    "斯洛文尼亚语": "sl",
+    "瑞典语": "sv",
+    "匈牙利语": "hu",
+    "繁体中文": "zh-TW",
+    "越南语": "vi",
+}
+
 
 class TranslateNode:
     def __init__(self):
         config_data = LoadConfig()
         self.appid = config_data["Baidu"]["AppId"]
         self.appkey = config_data["Baidu"]["Secret"]
+        self.proxy = config_data["Google"]["proxy"] if "Google" in config_data else ""
         pass
 
     @classmethod
     def INPUT_TYPES(self):
         return {
             "required": {
-                "from_lang": (["自动"] + list(lang_list.keys()), {"default": "自动"}),
-                "to_lang": (list(lang_list.keys()), {"default": "英语"}),
-                "text": (
-                    "STRING",
-                    {"default": "", "multiline": True, "dynamicPrompts": True},
+                "from_lang": (
+                    ["自动"] + list(baidu_lang_list.keys()),
+                    {"default": "自动"},
                 ),
+                "to_lang": (list(baidu_lang_list.keys()), {"default": "英语"}),
+                "text": ("STRING", {"default": "", "multiline": True}),
+                "platform": (["Google", "百度"], {"default": "Google"}),
             },
             "optional": {
                 "clip": ("CLIP",),
@@ -67,7 +99,7 @@ class TranslateNode:
     OUTPUT_NODE = False
     CATEGORY = "NYJY/text"
 
-    def run(self, from_lang, to_lang, text, clip=None):
+    def trans_by_baidu(self, from_lang, to_lang, text):
         endpoint = "http://api.fanyi.baidu.com"
         path = "/api/trans/vip/translate"
         url = endpoint + path
@@ -86,8 +118,10 @@ class TranslateNode:
         payload = {
             "appid": self.appid,
             "q": query,
-            "from": lang_list[from_lang] if from_lang in lang_list else "auto",
-            "to": lang_list[to_lang],
+            "from": (
+                baidu_lang_list[from_lang] if from_lang in baidu_lang_list else "auto"
+            ),
+            "to": baidu_lang_list[to_lang],
             "salt": salt,
             "sign": sign,
         }
@@ -103,7 +137,27 @@ class TranslateNode:
         arr_res = []
         for item in result["trans_result"]:
             arr_res.append(item["dst"])
-        translate_str = ("\n").join(arr_res)
+
+        return ("\n").join(arr_res)
+
+    def trans_by_google(self, from_lang, to_lang, text):
+        client = Translate(proxies={"https": self.proxy})
+        if from_lang == "自动":
+            text = client.translate(text, target=google_lang_list[to_lang])
+        else:
+            text = client.translate(
+                text,
+                source=google_lang_list[from_lang],
+                target=google_lang_list[to_lang],
+            )
+
+        return text.translatedText
+
+    def run(self, from_lang, to_lang, text, platform, clip=None):
+        if platform == "Google":
+            translate_str = self.trans_by_google(from_lang, to_lang, text)
+        else:
+            translate_str = self.trans_by_baidu(from_lang, to_lang, text)
 
         if clip is None:
             return (translate_str, [[]])
