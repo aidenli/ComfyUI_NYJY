@@ -17,7 +17,7 @@
 （感谢艾威大师兄提出的修改建议）
 
 ## 节点列表
-#### [Translate -- 翻译节点，基于百度翻译接口，支持多语言](docs/translate.md)
+#### [Translate -- 翻译节点，对接谷歌翻译和百度翻译，支持多语言](docs/translate.md)
 
 #### [JoyTag -- 反推图片，输出tags](docs/joytag.md)
 
