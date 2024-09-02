@@ -8,7 +8,7 @@
 
 - 大语言模型：[unsloth/Meta-Llama-3.1-8B-bnb-4bit]( https://huggingface.co/unsloth/Meta-Llama-3.1-8B-bnb-4bit/tree/main )，下载后将存放到此路径：[comfyui_project]/models/llm/Meta-Llama-3.1-8B-bnb-4bit
 
-模型网盘下载地址：https://pan.quark.cn/s/e2a52f2a5bae
+访问外网有困难的朋友可以通过夸克网盘下载：https://pan.quark.cn/s/e2a52f2a5bae
 
 #### 2 节点参数说明
 
