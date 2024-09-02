@@ -2,7 +2,7 @@ torch
 torchvision>=0.15.2
 einops>=0.7.0
 safetensors>=0.4.1
-pillow>=9.4.0
+Pillow>=9.4.0
 huggingface_hub>=0.23.5
 accelerate
 transformers>=4.43.3
