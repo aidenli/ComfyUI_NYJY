@@ -17,11 +17,11 @@
 （感谢艾威大师兄提出的修改建议）
 
 ## 节点列表
-#### [Translate -- 翻译节点，对接谷歌翻译和百度翻译，支持多语言](docs/translate.md)
+#### [Translate -- 翻译节点，对接谷歌翻译和百度翻译，支持多语言。（点击查看详细）](docs/translate.md)
 
-#### [JoyTag -- 反推图片，输出tags](docs/joytag.md)
+#### [JoyTag -- 反推图片，输出tags。（点击查看详细）](docs/joytag.md)
 
-#### [JoyCaption -- 反推图片，输出自然语言](docs/joycaption.md)
+#### [JoyCaption -- 反推图片，输出自然语言。（点击查看详细）](docs/joycaption.md)
 
 ## 安装方法（两种方式）
 ### 1. 通过ComfyUI Manager安装。
