@@ -10,11 +10,13 @@ from transformers import (
 from ..config import LoadConfig, print_log
 import os
 from huggingface_hub import snapshot_download
-import gc
 import torch
 from PIL import Image
 import numpy as np
 from pathlib import Path
+from .online import joy_caption_online
+from ..utils import create_nonceid
+import time
 
 config_data = LoadConfig()
 
@@ -97,6 +99,7 @@ class JoyCaptionNode:
                     {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
                 ),
                 "clear_cache": ("BOOLEAN", {"default": False}),
+                "newbie": ("BOOLEAN", {"default": False}),
             }
         }
 
@@ -108,15 +111,8 @@ class JoyCaptionNode:
     llama_model = None
     clip_model = None
 
-    def run(
-        self,
-        model,
-        image,
-        prompt,
-        max_new_tokens,
-        top_k,
-        temperature,
-        clear_cache,
+    def run_local(
+        self, model, image, prompt, max_new_tokens, top_k, temperature, clear_cache
     ):
         if self.llama_model is None:
             # load LLM
@@ -239,7 +235,9 @@ class JoyCaptionNode:
             generate_ids = generate_ids[:, :-1]
 
         caption = self.llama_model.tokenizer.batch_decode(
-            generate_ids, skip_special_tokens=False, clean_up_tokenization_spaces=False
+            generate_ids,
+            skip_special_tokens=False,
+            clean_up_tokenization_spaces=False,
         )[0]
         print_log(f"Exec Finished")
         if clear_cache is True:
@@ -247,3 +245,50 @@ class JoyCaptionNode:
             self.llama_model = None
 
         return (caption.strip(),)
+
+    def run_online(self, images):
+        tmp_folder = os.path.join(config_data["base_path"], "tmp")
+        if not os.path.exists(tmp_folder):
+            os.mkdir(tmp_folder)
+
+        for batch_number, image in enumerate(images):
+            # 只处理一张
+            i = 255.0 * image.cpu().numpy()
+            img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+            file_name = f"{time.time()}_{create_nonceid(10)}.png"
+            file_path = os.path.join(tmp_folder, file_name)
+            img.save(file_path)
+            break
+
+        jco = joy_caption_online()
+        result = jco.analyze(file_path).strip()
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            print_log(f"删除临时文件失败：{e}")
+
+        return (result,)
+
+    def run(
+        self,
+        model,
+        image,
+        prompt,
+        max_new_tokens,
+        top_k,
+        temperature,
+        clear_cache,
+        newbie,
+    ):
+        if newbie == True:
+            return self.run_online(image)
+        else:
+            return self.run_local(
+                model,
+                image,
+                prompt,
+                max_new_tokens,
+                top_k,
+                temperature,
+                clear_cache,
+            )

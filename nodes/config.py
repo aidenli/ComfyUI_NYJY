@@ -2,24 +2,6 @@ import os
 import json
 from inspect import currentframe, stack, getmodule
 import time
-import winreg
-
-
-# 获取系统代理地址
-def get_system_proxy():
-    try:
-        internet_settings = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",
-        )
-        proxy_server, _ = winreg.QueryValueEx(internet_settings, "ProxyServer")
-        proxy_enable, _ = winreg.QueryValueEx(internet_settings, "ProxyEnable")
-        if proxy_enable:
-            return proxy_server
-        else:
-            return None
-    except FileNotFoundError:
-        return None
 
 
 config_template = {
@@ -28,7 +10,6 @@ config_template = {
         "model_download": "https://hf-mirror.com/fancyfeast/joytag/tree/main",
         "hf_project": "fancyfeast/joytag",
     },
-    "Google": {"proxy": "http://localhost:10809"},
 }
 
 current_path = os.path.abspath(os.path.dirname(__file__))
@@ -60,11 +41,6 @@ def LoadConfig():
             config_data = json.loads(content)
             # 合并最新的配置项（当config_template有变动的时候）
             config_data = merge_config(config_data, config_template)
-
-    # 获取系统代理地址，并修改配置文件
-    proxy = get_system_proxy()
-    if proxy:
-        config_data["Google"]["proxy"] = proxy
 
     with open(config_path, "w") as f:
         f.write(json.dumps(config_data, indent=4))

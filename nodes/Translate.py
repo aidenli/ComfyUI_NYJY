@@ -4,6 +4,7 @@ import random
 import json
 from hashlib import md5
 from .config import LoadConfig
+from .utils import get_system_proxy
 from pygtrans import Translate
 
 # 语言列表
@@ -68,10 +69,6 @@ google_lang_list = {
 
 class TranslateNode:
     def __init__(self):
-        config_data = LoadConfig()
-        self.appid = config_data["Baidu"]["AppId"]
-        self.appkey = config_data["Baidu"]["Secret"]
-        self.proxy = config_data["Google"]["proxy"] if "Google" in config_data else ""
         pass
 
     @classmethod
@@ -154,6 +151,11 @@ class TranslateNode:
         return text.translatedText
 
     def run(self, from_lang, to_lang, text, platform, clip=None):
+        config_data = LoadConfig()
+        self.appid = config_data["Baidu"]["AppId"]
+        self.appkey = config_data["Baidu"]["Secret"]
+        self.proxy = get_system_proxy()
+
         if platform == "Google":
             translate_str = self.trans_by_google(from_lang, to_lang, text)
         else:
