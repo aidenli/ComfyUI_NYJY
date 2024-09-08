@@ -10,6 +10,7 @@ config_template = {
         "model_download": "https://hf-mirror.com/fancyfeast/joytag/tree/main",
         "hf_project": "fancyfeast/joytag",
     },
+    "Google": {"proxy": "127.0.0.1:10809"},
 }
 
 current_path = os.path.abspath(os.path.dirname(__file__))
@@ -33,27 +34,26 @@ def LoadConfig():
     global config_path
     global current_path
 
-    config_data = config_template.copy()
+    if config_data is not None:
+        return config_data
+    else:
+        config_data = config_template.copy()
 
-    if os.path.exists(config_path):
-        with open(config_path, "r") as f:
-            content = f.read()
-            config_data = json.loads(content)
-            # 合并最新的配置项（当config_template有变动的时候）
-            config_data = merge_config(config_data, config_template)
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                content = f.read()
+                config_data = json.loads(content)
+                # 合并最新的配置项（当config_template有变动的时候）
+                config_data = merge_config(config_data, config_template)
 
-    with open(config_path, "w") as f:
-        f.write(json.dumps(config_data, indent=4))
+        with open(config_path, "w") as f:
+            f.write(json.dumps(config_data, indent=4))
 
-    current_dir = os.path.dirname(__file__)
-    config_data["base_path"] = os.path.dirname(
-        current_dir
-    )  # os.path.join(current_path, "../")
-    return config_data
+        current_dir = os.path.dirname(__file__)
+        config_data["base_path"] = os.path.dirname(current_dir)
+        return config_data
 
 
 def print_log(str_msg):
-    # f_current_line = str(currentframe().f_back.f_lineno)  # 哪一行调用的此函数
-    # mod = getmodule(stack()[1][0])  # 调用函数的信息
     str_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"[NYJY][{str_time}][{stack()[1][1]}, line: {stack()[1][2]}]: {str_msg}")

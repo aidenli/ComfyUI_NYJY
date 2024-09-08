@@ -30,7 +30,7 @@ class joy_caption_online:
         self.__host = host
         pass
 
-    def __upload_image(self, img_path, file_info):
+    def __upload_image(self, file_info):
         file_info.name
         nonceid = create_nonceid(11)
 
@@ -38,6 +38,7 @@ class joy_caption_online:
             response = self.__session.post(
                 f"https://{self.__host}/upload?upload_id={nonceid}",
                 files={"files": (file_info.name, open(file_info, "rb"))},
+                timeout=20,
             )
 
             arr_img = json.loads(response.text)
@@ -69,6 +70,7 @@ class joy_caption_online:
                     "trigger_id": 5,
                     "session_hash": nonceid,
                 },
+                timeout=60,
             )
             return nonceid
         except requests.exceptions.RequestException as e:
@@ -83,6 +85,7 @@ class joy_caption_online:
             response = self.__session.get(
                 f"https://{self.__host}/queue/data?session_hash={nonceid}",
                 stream=True,
+                timeout=30,
             )
 
             for line in response.iter_lines():
@@ -108,7 +111,7 @@ class joy_caption_online:
     def analyze(self, img_path):
         file_info = Path(img_path)
         print_log("上传图片进行分析")
-        img_url = self.__upload_image(img_path, file_info)
+        img_url = self.__upload_image(file_info)
         if img_url == "":
             return ""
         print_log("提交服务器处理中...")
