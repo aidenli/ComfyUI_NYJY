@@ -1,6 +1,5 @@
 import string
 import secrets
-import winreg
 import os
 from .config import LoadConfig
 
@@ -14,6 +13,8 @@ def create_nonceid(length=10):
 # 获取系统代理地址
 def get_system_proxy():
     if os.name == "nt":
+        import winreg
+
         try:
             internet_settings = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
