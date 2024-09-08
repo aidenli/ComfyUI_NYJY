@@ -3,6 +3,13 @@ import secrets
 import os
 from .config import LoadConfig
 
+# Import winreg only if running on Windows
+if os.name == "nt":  # 'nt' indicates Windows
+    import winreg
+else:
+    # Define a mock for winreg to avoid errors on non-Windows platforms
+    winreg = None
+
 
 def create_nonceid(length=10):
     alphabet = string.ascii_letters + string.digits
@@ -12,9 +19,10 @@ def create_nonceid(length=10):
 
 # 获取系统代理地址
 def get_system_proxy():
-    if os.name == "nt":
-        import winreg
-
+    if winreg is None:
+        config_data = LoadConfig()
+        return config_data["Google"]["proxy"] if "Google" in config_data else None
+    else:
         try:
             internet_settings = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
@@ -28,6 +36,3 @@ def get_system_proxy():
                 return None
         except FileNotFoundError:
             return None
-    else:
-        config_data = LoadConfig()
-        return config_data["Google"]["proxy"] if "Google" in config_data else None
