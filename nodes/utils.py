@@ -24,8 +24,8 @@ def create_nonceid(length=10):
 
 # 获取系统代理地址
 def get_system_proxy():
+    config_data = LoadConfig()
     if winreg is None:
-        config_data = LoadConfig()
         return config_data["Google"]["proxy"] if "Google" in config_data else None
     else:
         try:
