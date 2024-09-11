@@ -2,6 +2,11 @@ import string
 import secrets
 import os
 from .config import LoadConfig
+import random
+import folder_paths
+from inspect import currentframe, stack, getmodule
+import time
+
 
 # Import winreg only if running on Windows
 if os.name == "nt":  # 'nt' indicates Windows
@@ -36,3 +41,36 @@ def get_system_proxy():
                 return None
         except FileNotFoundError:
             return None
+
+
+def save_image_bytes_for_preview(image, output_dir: str = None, prefix=None):
+    if output_dir is None:
+        output_dir = folder_paths.get_temp_directory()
+
+    if prefix is None:
+        prefix = "preview_" + "".join(
+            random.choice("abcdefghijklmnopqrstupvxyz") for x in range(8)
+        )
+
+    # save image to temp folder
+    (
+        outdir,
+        filename,
+        counter,
+        subfolder,
+        _,
+    ) = folder_paths.get_save_image_path(prefix, output_dir)
+    file = f"{filename}_{counter:05}_.jpeg"
+    with open(os.path.join(outdir, file), "wb") as f:
+        f.write(image)
+
+    return {
+        "filename": file,
+        "subfolder": subfolder,
+        "type": "temp",
+    }
+
+
+def print_log(str_msg):
+    str_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"[NYJY][{str_time}][{stack()[1][1]}, line: {stack()[1][2]}]: {str_msg}")
