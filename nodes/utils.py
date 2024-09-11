@@ -38,9 +38,13 @@ def get_system_proxy():
             if proxy_enable:
                 return proxy_server
             else:
-                return None
+                print_log("没有查询到系统的代理，使用默认值")
+                return (
+                    config_data["Google"]["proxy"] if "Google" in config_data else None
+                )
         except FileNotFoundError:
-            return None
+            print_log("没有查询到系统的代理，使用默认值")
+            return config_data["Google"]["proxy"] if "Google" in config_data else None
 
 
 def save_image_bytes_for_preview(image, output_dir: str = None, prefix=None):

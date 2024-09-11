@@ -10,11 +10,6 @@ class joy_caption_online:
     def __init__(self, host="fancyfeast-joy-caption-pre-alpha.hf.space") -> None:
         # 获取系统代理
         proxy = get_system_proxy()
-        proxies = {
-            "http": f"{proxy}",
-            "https": f"{proxy}",
-        }
-
         ua = UserAgent(platforms="pc")
         # 定义头部信息
         headers = {
@@ -24,8 +19,16 @@ class joy_caption_online:
         }
 
         self.__session = requests.Session()
+
         self.__session.trust_env = False
-        self.__session.proxies = proxies
+
+        if proxy is not None:
+            proxies = {
+                "http": f"{proxy}",
+                "https": f"{proxy}",
+            }
+            self.__session.proxies = proxies
+
         self.__session.headers = headers
         self.__host = host
         pass

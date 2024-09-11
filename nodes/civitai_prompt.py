@@ -11,28 +11,28 @@ from .utils import save_image_bytes_for_preview, print_log
 class CivitaiPromptNode:
     __image_list = []
     __next_cursor = None
-    __selected_image_id = None
     __cache_id = None
 
     def __init__(self, host="civitai.com", max_page=3):
         proxy = get_system_proxy()
-        proxies = {
-            "http": f"{proxy}",
-            "https": f"{proxy}",
-        }
-
         ua = UserAgent(platforms="pc")
-        # 定义头部信息
-        headers = {
+
+        self.__session = requests.Session()
+        self.__session.trust_env = False
+
+        if proxy is not None:
+            proxies = {
+                "http": f"{proxy}",
+                "https": f"{proxy}",
+            }
+            self.__session.proxies = proxies
+
+        self.__session.headers = {
             "origin": f"https://{host}",
             "referer": f"https://{host}",
             "user-agent": ua.random,
         }
 
-        self.__session = requests.Session()
-        self.__session.trust_env = False
-        self.__session.proxies = proxies
-        self.__session.headers = headers
         self._max_page = max_page
 
     @classmethod
@@ -161,6 +161,7 @@ class CivitaiPromptNode:
         if len(self.__image_list) < 10:
             print_log(f"获取图片列表")
             self.__image_list += self.req_list(self.__next_cursor)
+            print(self.__image_list)
 
         # 如果是保持提示词并且有缓存的图片id，则使用缓存图片id的数据
         if fixed_prompt and self.__cache_id is not None:
