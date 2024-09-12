@@ -81,7 +81,7 @@ class TranslateNode:
                 ),
                 "to_lang": (list(baidu_lang_list.keys()), {"default": "英语"}),
                 "text": ("STRING", {"default": "", "multiline": True}),
-                "platform": (["Google", "百度"], {"default": "Google"}),
+                "platform": (["Google", "百度"], {"default": "百度"}),
             },
             "optional": {
                 "clip": ("CLIP",),
@@ -138,7 +138,7 @@ class TranslateNode:
         return ("\n").join(arr_res)
 
     def trans_by_google(self, from_lang, to_lang, text):
-        client = Translate(proxies={"https": self.proxy})
+        client = Translate(proxies={"https": self.proxy}, timeout=20)
         if from_lang == "自动":
             text = client.translate(text, target=google_lang_list[to_lang])
         else:

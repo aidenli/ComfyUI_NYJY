@@ -6,43 +6,30 @@ import random
 from .utils import get_system_proxy
 from lxml import html
 from .utils import save_image_bytes_for_preview, print_log
+import urllib.request
 
 
 class CivitaiPromptNode:
+    __session = None
     __image_list = []
     __next_cursor = None
     __cache_id = None
-
-    def __init__(self, host="civitai.com", max_page=3):
-        proxy = get_system_proxy()
-        ua = UserAgent(platforms="pc")
-
-        self.__session = requests.Session()
-        self.__session.trust_env = False
-
-        if proxy is not None:
-            proxies = {
-                "http": f"{proxy}",
-                "https": f"{proxy}",
-            }
-            self.__session.proxies = proxies
-
-        self.__session.headers = {
-            "origin": f"https://{host}",
-            "referer": f"https://{host}",
-            "user-agent": ua.random,
-        }
-
-        self._max_page = max_page
+    __cache_positive = ""
+    __cache_negative = ""
+    __cache_previews = []
 
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "required": {"fixed_prompt": ("BOOLEAN", {"default": True})},
+            "required": {
+                "fixed_prompt": ("BOOLEAN", {"default": True}),
+                "preview_image": ("BOOLEAN", {"default": True}),
+                "mirror_sites": ("BOOLEAN", {"default": False}),
+            },
         }
 
     @classmethod
-    def IS_CHANGED(self, fixed_prompt):
+    def IS_CHANGED(self, fixed_prompt, preview_image, mirror_sites):
         if fixed_prompt:
             return self.__cache_id
         else:
@@ -53,6 +40,31 @@ class CivitaiPromptNode:
     FUNCTION = "choise_image"
     OUTPUT_NODE = False
     CATEGORY = "NYJY/text"
+
+    def init_request(self, mirror_sites):
+        self.__session = requests.Session()
+
+        if mirror_sites == True:
+            host = "civitai.work"
+        else:
+            host = "civitai.com"
+
+            proxy = get_system_proxy()
+            if proxy is not None:
+                proxies = {
+                    "http": f"{proxy}",
+                    "https": f"{proxy}",
+                }
+                self.__session.trust_env = False
+                self.__session.proxies = proxies
+
+        ua = UserAgent(platforms="pc")
+        self.__host = host
+        self.__session.headers = {
+            "origin": f"https://{host}",
+            "referer": f"https://{host}",
+            "user-agent": ua.random,
+        }
 
     def req_list(self, next_cursor=None):
         if next_cursor is None:
@@ -84,8 +96,8 @@ class CivitaiPromptNode:
             }
 
         try:
-            req = f"https://civitai.com/api/trpc/image.getInfinite?input={quote(json.dumps(req_data))}"
-            response = self.__session.get(req, timeout=20)
+            req = f"https://{self.__host}/api/trpc/image.getInfinite?input={quote(json.dumps(req_data))}"
+            response = self.__session.get(req, timeout=10)
 
             json_rsp = json.loads(response.text)
 
@@ -105,15 +117,14 @@ class CivitaiPromptNode:
             print_log(f"获取图片列表失败:{e}")
             return []
 
-    def get_image_detail(self, image_id) -> tuple[str, str]:
+    def get_image_detail(self, image_id) -> tuple[str, str, int]:
         req_data = {"json": {"id": image_id}}
 
         try:
             response = self.__session.get(
-                f"https://civitai.com/api/trpc/image.getGenerationData?input={quote(json.dumps(req_data))}",
+                f"https://{self.__host}/api/trpc/image.getGenerationData?input={quote(json.dumps(req_data))}",
                 timeout=10,
             )
-
             json_rsp = json.loads(response.text)
             return (
                 (
@@ -126,48 +137,57 @@ class CivitaiPromptNode:
                     if "negativePrompt" in json_rsp["result"]["data"]["json"]["meta"]
                     else ""
                 ),
+                0,
             )
 
         except Exception as e:
             print_log(f"获取图片详情失败[{image_id}]:{e}")
-            return ("", "")
+            return ("", "", 1)
 
     def get_image(self, image_id):
         try:
             response = self.__session.get(
-                f"https://civitai.com/images/{image_id}", timeout=10
+                f"https://{self.__host}/images/{image_id}", timeout=10
             )
             tree = html.fromstring(response.text)
             results = tree.xpath(
                 "//div[contains(@class,'mantine-Carousel-slide')]//img[1]/@src"
             )
-
-            img_response = self.__session.get(results[0])
-            if img_response.status_code == 200:
-                return [
-                    save_image_bytes_for_preview(
-                        img_response.content, None, f"cimage_{image_id}"
-                    )
-                ]
-
+            if len(results) > 0:
+                img_url = results[0].replace("original=true", "width=450")
+                print_log(f"下载图片: {img_url}")
+                img_response = self.__session.get(img_url, timeout=20)
+                if img_response.status_code == 200:
+                    return [
+                        save_image_bytes_for_preview(
+                            img_response.content, None, f"cimage_{image_id}"
+                        )
+                    ]
             return []
         except Exception as e:
             print_log(f"下载图片失败[{image_id}]:{e}")
             return []
 
-    def choise_image(self, fixed_prompt) -> tuple[str, str]:
+    def choise_image(
+        self, fixed_prompt, preview_image, mirror_sites
+    ) -> tuple[str, str]:
+        self.init_request(mirror_sites)
         previews = []
 
         if len(self.__image_list) < 10:
             print_log(f"获取图片列表")
             self.__image_list += self.req_list(self.__next_cursor)
-            print(self.__image_list)
 
         # 如果是保持提示词并且有缓存的图片id，则使用缓存图片id的数据
         if fixed_prompt and self.__cache_id is not None:
-            positive, negative = self.get_image_detail(self.__cache_id)
-            previews = self.get_image(self.__cache_id)
-            return {"result": (positive, negative), "ui": {"images": previews}}
+            print_log(f"load cache")
+            return {
+                "result": (self.__cache_positive, self.__cache_negative),
+                "ui": {"images": self.__cache_previews},
+            }
+
+        if len(self.__image_list) == 0:
+            return {"result": ("", ""), "ui": {"images": previews}}
 
         cur = 0
         while cur < 5:
@@ -175,12 +195,18 @@ class CivitaiPromptNode:
             idx = random.randint(0, len(self.__image_list) - 1)
             image_id = self.__image_list.pop(idx)
             print_log(f"获取图片[{image_id}]的提示词")
+            positive, negative, errcode = self.get_image_detail(image_id)
+            if errcode > 0:
+                break
 
-            positive, negative = self.get_image_detail(image_id)
             if len(positive) > 0:
                 self.__cache_id = image_id
-                previews = self.get_image(image_id)
-                print_log(f"获取图片[{image_id}]的内容")
+                self.__cache_positive = positive
+                self.__cache_negative = negative
+                if preview_image:
+                    print_log(f"获取图片[{image_id}]的内容")
+                    previews = self.get_image(image_id)
+                    self.__cache_previews = previews
                 return {"result": (positive, negative), "ui": {"images": previews}}
 
         return {"result": ("", ""), "ui": {"images": previews}}

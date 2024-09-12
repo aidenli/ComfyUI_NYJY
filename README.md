@@ -1,5 +1,11 @@
 # ComfyUI_NYJY
 ## 更新日志
+#### 2024-09-13
+- 增加CivitaiPrompt节点
+- 修复一些bug，优化体验
+
+（感谢王剑锋老师提出的修改建议）
+
 #### 2024-09-01
 - 支持Google翻译。更新的小伙伴需要安装一个新的包：pygtrans。
 ```bash
@@ -22,6 +28,8 @@
 #### [JoyTag -- 反推图片，输出tags。（点击查看详细）](docs/joytag.md)
 
 #### [JoyCaption -- 反推图片，输出自然语言。（点击查看详细）](docs/joycaption.md)
+
+#### [CivitaiPrompt -- 随机获取C站图片的提示词。（点击查看详细）](docs/civitaiprompt.md)
 
 ## 安装方法（两种方式）
 ### 1. 通过ComfyUI Manager安装。
