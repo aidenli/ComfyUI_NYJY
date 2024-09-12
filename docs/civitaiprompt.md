@@ -12,4 +12,10 @@ preview_image：预览随机选取到的图片
 
 mirror_sites：关闭时，从civitai.com获取数据；开始时，从civitai.work获取数据
 
-[**重要**]个人测试感觉：civitai.work站点延时较高，如果能科学上网，建议关闭mirror_sites选项。如果不能科学上网，建议关闭preview_image选项，便于提高速度。如果发现执行后无任何内容返回，一般是因为接口返回超时了，尝试重新执行。
+#### 2 使用方式建议
+
+- 个人测试感觉：civitai.work站点延时较高，如果能科学上网，建议关闭mirror_sites选项；如果不能科学上网，则需要打开mirror_sites选项。
+
+- 如果觉得节点执行时间太长，建议关闭preview_image选项，便于提高执行速度。
+
+- 如果发现执行后无任何内容返回，一般是因为接口返回超时了，尝试重新执行。
