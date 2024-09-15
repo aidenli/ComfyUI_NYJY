@@ -16,7 +16,7 @@ def install_package(full_name, package_name):
 
 
 def check_and_install_packages():
-    packages = ["pygtrans", "fake_useragent"]
+    packages = ["pygtrans", "fake_useragent", "lxml"]
     for package in packages:
         package_name = re.match(r"^([^\s=<>!]+)", package.strip())
         if package_name:
