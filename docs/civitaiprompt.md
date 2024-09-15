@@ -10,7 +10,7 @@ fixed_prompt：打开选项时获取图片后下次运行不再获取其他图�
 
 preview_image：预览随机选取到的图片
 
-mirror_sites：关闭时，从civitai.com获取数据；开始时，从civitai.work获取数据
+mirror_sites：关闭时，从civitai.com获取数据；开启时，从civitai.work获取数据
 
 #### 2 使用方式建议
 
