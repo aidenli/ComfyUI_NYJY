@@ -251,18 +251,19 @@ class JoyCaptionNode:
         if not os.path.exists(tmp_folder):
             os.mkdir(tmp_folder)
 
-        for batch_number, image in enumerate(images):
-            # 只处理一张
-            i = 255.0 * image.cpu().numpy()
-            img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-            file_name = f"{time.time()}_{create_nonceid(10)}.png"
-            file_path = os.path.join(tmp_folder, file_name)
-            img.save(file_path)
-            break
-
-        jco = joy_caption_online()
-        result = jco.analyze(file_path).strip()
         try:
+            for batch_number, image in enumerate(images):
+                # 只处理一张
+                i = 255.0 * image.cpu().numpy()
+                img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+                file_name = f"{time.time()}_{create_nonceid(10)}.png"
+                file_path = os.path.join(tmp_folder, file_name)
+                img.save(file_path)
+                break
+
+            jco = joy_caption_online()
+            result = jco.analyze(file_path).strip()
+
             os.remove(file_path)
         except Exception as e:
             print_log(f"删除临时文件失败：{e}")

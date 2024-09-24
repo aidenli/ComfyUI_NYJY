@@ -65,7 +65,13 @@ def save_image_bytes_for_preview(image, output_dir: str = None, prefix=None):
     file = f"{filename}_{counter:05}_.jpeg"
     with open(os.path.join(outdir, file), "wb") as f:
         f.write(image)
-
+    print_log(
+        {
+            "filename": file,
+            "subfolder": subfolder,
+            "type": "temp",
+        }
+    )
     return {
         "filename": file,
         "subfolder": subfolder,

@@ -5,8 +5,10 @@ from urllib.parse import quote
 import random
 from .utils import get_system_proxy
 from lxml import html
-from .utils import save_image_bytes_for_preview, print_log
+from .utils import print_log, save_image_bytes_for_preview
 import urllib.request
+import folder_paths
+import os
 
 
 class CivitaiPromptNode:
@@ -158,12 +160,8 @@ class CivitaiPromptNode:
                 print_log(f"下载图片: {img_url}")
                 img_response = self.__session.get(img_url, timeout=20)
                 if img_response.status_code == 200:
-                    return [
-                        save_image_bytes_for_preview(
-                            img_response.content, None, f"cimage_{image_id}"
-                        )
-                    ]
-            return []
+                    return img_response.content
+            return None
         except Exception as e:
             print_log(f"下载图片失败[{image_id}]:{e}")
             return []
@@ -205,7 +203,26 @@ class CivitaiPromptNode:
                 self.__cache_negative = negative
                 if preview_image:
                     print_log(f"获取图片[{image_id}]的内容")
-                    previews = self.get_image(image_id)
+                    image_content = self.get_image(image_id)
+
+                    output_dir = os.path.join(
+                        folder_paths.get_output_directory(), "civitai_prompt"
+                    )
+
+                    if not os.path.exists(output_dir):
+                        os.makedirs(output_dir)
+                    # 保存图片到output目录
+                    with open(os.path.join(output_dir, f"{image_id}.jpeg"), "wb") as f:
+                        f.write(image_content)
+                    # 保存提示词
+                    with open(
+                        os.path.join(output_dir, f"{image_id}_prmopt.txt"), "w"
+                    ) as f:
+                        f.write(f"positive:\n{positive}")
+                        if len(negative) > 0:
+                            f.write(f"\n\n---------------------\nnegative:\n{negative}")
+
+                    previews = [save_image_bytes_for_preview(image_content)]
                     self.__cache_previews = previews
                 return {"result": (positive, negative), "ui": {"images": previews}}
 

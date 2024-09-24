@@ -10,6 +10,9 @@ import os
 import numpy as np
 import json
 import re
+import folder_paths
+import shutil
+from ..utils import print_log
 
 
 class JoyTagNode:
@@ -17,6 +20,9 @@ class JoyTagNode:
         config_data = LoadConfig()
         self.config_data = config_data
         self.model_path = os.path.join(self.config_data["base_path"], "models/joytag/")
+        self.clip_model_path = os.path.join(
+            folder_paths.get_folder_paths("clip")[0], "joytag"
+        )
         pass
 
     @classmethod
@@ -81,11 +87,11 @@ class JoyTagNode:
         return image_tensor
 
     def predict(self, image: Image.Image, threshold):
-        model = VisionModel.load_model(self.model_path)
+        model = VisionModel.load_model(self.clip_model_path)
         model.eval()
         model = model.to("cuda")
 
-        with open(os.path.join(self.model_path, "top_tags.txt"), "r") as f:
+        with open(os.path.join(self.clip_model_path, "top_tags.txt"), "r") as f:
             top_tags = [line.strip() for line in f.readlines() if line.strip()]
 
         image_tensor = self.prepare_image(image, model.image_size)
@@ -103,15 +109,31 @@ class JoyTagNode:
         return tag_string, scores
 
     def run(self, image, THRESHOLD, positive, nagetive, safe_mode):
+        # 创建模型目录
+        if not os.path.exists(self.clip_model_path):
+            os.mkdir(self.clip_model_path)
+
+        # 移动旧文件
+        if os.path.exists(self.model_path):
+            for file in os.listdir(self.model_path):
+                source_file = os.path.join(self.model_path, file)
+                target_file = os.path.join(self.clip_model_path, file)
+                shutil.move(source_file, target_file)
+            shutil.rmtree(os.path.join(self.config_data["base_path"], "models"))
+
+        # 如果没有模型文件就下载
         if (
-            os.path.exists(os.path.join(self.model_path, "model.safetensors")) == False
-        ) or (os.path.exists(os.path.join(self.model_path, "top_tags.txt")) == False):
-            print("开始下载模型")
+            os.path.exists(os.path.join(self.clip_model_path, "model.safetensors"))
+            == False
+        ) or (
+            os.path.exists(os.path.join(self.clip_model_path, "top_tags.txt")) == False
+        ):
+            print_log(f"开始下载模型到：{self.clip_model_path}")
             os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
             snapshot_download(
                 repo_id=self.config_data["joytag"]["hf_project"],
                 ignore_patterns=["*.onnx"],
-                local_dir=self.model_path,
+                local_dir=self.clip_model_path,
             )
 
         i = 255.0 * image[0].cpu().numpy()
