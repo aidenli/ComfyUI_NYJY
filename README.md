@@ -1,5 +1,9 @@
 # ComfyUI_NYJY
 ## 更新日志
+#### 2024-09-124
+- 修改JoyTag依赖模型的路径为 models/clip/joytag
+- 运行CivitaiPrompt获取图片提示词后，会将图片和提示词记录在 output/civitai_prompt目录中
+  
 #### 2024-09-13
 - 增加CivitaiPrompt节点
 - 修复一些bug，优化体验
