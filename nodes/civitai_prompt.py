@@ -9,6 +9,10 @@ from .utils import print_log, save_image_bytes_for_preview
 import urllib.request
 import folder_paths
 import os
+import node_helpers
+import torch
+import numpy as np
+from PIL import Image, ImageOps, ImageSequence, ImageFile
 
 
 class CivitaiPromptNode:
@@ -19,6 +23,15 @@ class CivitaiPromptNode:
     __cache_positive = ""
     __cache_negative = ""
     __cache_previews = []
+    output_dir = ""
+
+    def __init__(self) -> None:
+        # 初始化保存图片目录
+        self.output_dir = os.path.join(
+            folder_paths.get_output_directory(), "civitai_prompt"
+        )
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
 
     @classmethod
     def INPUT_TYPES(s):
@@ -37,10 +50,10 @@ class CivitaiPromptNode:
         else:
             return random.random()
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("positive", "negative")
+    RETURN_TYPES = ("STRING", "STRING", "IMAGE")
+    RETURN_NAMES = ("positive", "negative", "image")
     FUNCTION = "choise_image"
-    OUTPUT_NODE = False
+    OUTPUT_NODE = True
     CATEGORY = "NYJY/text"
 
     def init_request(self, mirror_sites):
@@ -180,12 +193,23 @@ class CivitaiPromptNode:
         if fixed_prompt and self.__cache_id is not None:
             print_log(f"load cache")
             return {
-                "result": (self.__cache_positive, self.__cache_negative),
-                "ui": {"images": self.__cache_previews},
+                "result": (
+                    self.__cache_positive,
+                    self.__cache_negative,
+                    self.get_output_image(self.__cache_id),
+                ),
+                "ui": {
+                    "images": self.__cache_previews,
+                    "positive_text": (self.__cache_positive,),
+                    "negative_text": (self.__cache_negative,),
+                },
             }
 
         if len(self.__image_list) == 0:
-            return {"result": ("", ""), "ui": {"images": previews}}
+            return {
+                "result": ("", "", []),
+                "ui": {"images": previews, "positive_text": "", "negative_text": ""},
+            }
 
         cur = 0
         while cur < 5:
@@ -205,18 +229,14 @@ class CivitaiPromptNode:
                     print_log(f"获取图片[{image_id}]的内容")
                     image_content = self.get_image(image_id)
 
-                    output_dir = os.path.join(
-                        folder_paths.get_output_directory(), "civitai_prompt"
-                    )
-
-                    if not os.path.exists(output_dir):
-                        os.makedirs(output_dir)
                     # 保存图片到output目录
-                    with open(os.path.join(output_dir, f"{image_id}.jpeg"), "wb") as f:
+                    with open(
+                        os.path.join(self.output_dir, f"{image_id}.jpeg"), "wb"
+                    ) as f:
                         f.write(image_content)
                     # 保存提示词
                     with open(
-                        os.path.join(output_dir, f"{image_id}_prmopt.txt"), "w"
+                        os.path.join(self.output_dir, f"{image_id}_prmopt.txt"), "w"
                     ) as f:
                         f.write(f"positive:\n{positive}")
                         if len(negative) > 0:
@@ -224,6 +244,40 @@ class CivitaiPromptNode:
 
                     previews = [save_image_bytes_for_preview(image_content)]
                     self.__cache_previews = previews
-                return {"result": (positive, negative), "ui": {"images": previews}}
+                return {
+                    "result": (positive, negative, self.get_output_image(image_id)),
+                    "ui": {
+                        "images": previews,
+                        "positive_text": (positive,),
+                        "negative_text": (negative,),
+                    },
+                }
 
-        return {"result": ("", ""), "ui": {"images": previews}}
+        return {
+            "result": ("", "", []),
+            "ui": {"images": previews, "positive_text": "", "negative_text": ""},
+        }
+
+    def get_output_image(self, image_id):
+        image_path = os.path.join(self.output_dir, f"{image_id}.jpeg")
+        img = node_helpers.pillow(Image.open, image_path)
+
+        output_images = []
+        excluded_formats = ["MPO"]
+        for i in ImageSequence.Iterator(img):
+            i = node_helpers.pillow(ImageOps.exif_transpose, i)
+
+            if i.mode == "I":
+                i = i.point(lambda i: i * (1 / 255))
+            image = i.convert("RGB")
+
+            image = np.array(image).astype(np.float32) / 255.0
+            image = torch.from_numpy(image)[None,]
+            output_images.append(image)
+
+        if len(output_images) > 1 and img.format not in excluded_formats:
+            output_image = torch.cat(output_images, dim=0)
+        else:
+            output_image = output_images[0]
+
+        return output_image

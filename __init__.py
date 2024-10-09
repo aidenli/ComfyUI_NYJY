@@ -44,7 +44,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "JoyTag": "JoyTag (NYJY)",
     # "LoadLlamaModel": "LoadLlamaModel (NYJY)",
     "JoyCaption": "JoyCaption (NYJY)",
-    "CivitaiPrompt": "CivitaiPromptNode（NYJY）",
+    "CivitaiPrompt": "CivitaiPrompt（NYJY）",
 }
 
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
+WEB_DIRECTORY = "./web"
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]

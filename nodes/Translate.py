@@ -93,7 +93,7 @@ class TranslateNode:
         "CONDITIONING",
     )
     FUNCTION = "run"
-    OUTPUT_NODE = False
+    OUTPUT_NODE = True
     CATEGORY = "NYJY/text"
 
     def trans_by_baidu(self, from_lang, to_lang, text):
@@ -124,7 +124,7 @@ class TranslateNode:
         }
 
         # Send request
-        r = requests.post(url, params=payload, headers=headers)
+        r = requests.post(url, params=payload, headers=headers, proxies=None)
         result = r.json()
 
         if "error_code" in result:
@@ -162,12 +162,21 @@ class TranslateNode:
             translate_str = self.trans_by_baidu(from_lang, to_lang, text)
 
         if clip is None:
-            return (translate_str, [[]])
+            return {
+                "ui": {"text": (translate_str,)},
+                "result": (
+                    translate_str,
+                    [[]],
+                ),
+            }
 
         tokens = clip.tokenize(translate_str)
         output = clip.encode_from_tokens(tokens, return_pooled=True, return_dict=True)
         cond = output.pop("cond")
-        return (
-            translate_str,
-            [[cond, output]],
-        )
+        return {
+            "ui": {"text": (translate_str,)},
+            "result": (
+                translate_str,
+                [[cond, output]],
+            ),
+        }

@@ -17,6 +17,7 @@ from pathlib import Path
 from .online import joy_caption_online
 from ..utils import create_nonceid
 import time
+import folder_paths
 
 config_data = LoadConfig()
 
@@ -43,12 +44,10 @@ class ImageAdapter(nn.Module):
 class LlamaModel:
     def __init__(self, model_id):
         model_name = dict_models[model_id]
-        MODEL_PATH = os.path.join(config_data["base_path"], f"./models/{model_name}")
+        MODEL_PATH = os.path.join(config_data["base_path"], f"models/{model_name}")
 
         if not os.path.exists(MODEL_PATH):
-            MODEL_PATH = os.path.join(
-                config_data["base_path"], f"../../models/llm/{model_id}"
-            )
+            MODEL_PATH = os.path.join(folder_paths.models_dir, f"llm/{model_id}")
             if not os.path.exists(MODEL_PATH):
                 print_log(f"start download LLM: {model_name}")
                 snapshot_download(repo_id=model_name, local_dir=MODEL_PATH)
@@ -125,8 +124,8 @@ class JoyCaptionNode:
             )
             if not os.path.exists(CLIP_PATH):
                 CLIP_PATH = os.path.join(
-                    config_data["base_path"],
-                    f"../../models/clip/siglip-so400m-patch14-384",
+                    folder_paths.get_folder_paths("clip")[0],
+                    "siglip-so400m-patch14-384",
                 )
 
                 if not os.path.exists(CLIP_PATH):
@@ -143,7 +142,7 @@ class JoyCaptionNode:
             self.clip_model.to("cuda")
 
         # Image Adapter
-        print("Loading image adapter")
+        print_log("Loading image adapter")
         image_adapter = ImageAdapter(
             self.clip_model.config.hidden_size,
             self.llama_model.text_model.config.hidden_size,
