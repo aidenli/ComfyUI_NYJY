@@ -79,6 +79,8 @@ app.registerExtension({
 				w.inputEl.readOnly = true;
 				w.inputEl.style.opacity = 1;
 				w.value = message["text"];
+
+				this.onResize?.(this.size);
 			}
 		}
 	},
