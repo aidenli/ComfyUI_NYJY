@@ -15,6 +15,7 @@ from PIL import Image
 import numpy as np
 from pathlib import Path
 from .online import joy_caption_online
+from .jc2_online import jc2_online
 from ..utils import create_nonceid
 import time
 import folder_paths
@@ -102,7 +103,7 @@ class JoyCaptionNode:
             }
         }
 
-    CATEGORY = "NYJY/image"
+    CATEGORY = "NYJY/JoyCation"
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("captions",)
     FUNCTION = "run"
@@ -292,3 +293,69 @@ class JoyCaptionNode:
                 temperature,
                 clear_cache,
             )
+
+
+class JoyCaptionAlpha2OnlineNode:
+    @classmethod
+    def INPUT_TYPES(self):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+                "caption_type": (
+                    [
+                        "Descriptive",
+                        "Descriptive (Informal)",
+                        "Training Prompt",
+                        "MidJourney",
+                        "Booru tag list",
+                        "Booru-like tag list",
+                        "Art Critic",
+                        "Product Listing",
+                        "Social Media Post",
+                    ],
+                    {"default": "Descriptive"},
+                ),
+                "caption_length": (
+                    ["any", "very short", "short", "medium-length", "long", "very long"]
+                    + [str(i) for i in range(20, 261, 10)],
+                    {"default": "long"},
+                ),
+            },
+            "optional": {
+                "extra_options": ("JoyCaption2ExtraOption",),
+            },
+        }
+
+    CATEGORY = "NYJY/JoyCation"
+    FUNCTION = "run"
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("captions",)
+    OUTPUT_NODE = True
+
+    def run(self, image, caption_type, caption_length, extra_options):
+        tmp_folder = folder_paths.get_temp_directory()
+        for batch_number, img in enumerate(image):
+            # 只处理一张
+            i = 255.0 * img.cpu().numpy()
+            img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+            file_name = f"{time.time()}_{create_nonceid(10)}.png"
+            file_path = os.path.join(tmp_folder, file_name)
+            img.save(file_path)
+            break
+
+        extra = []
+        character_name = ""
+        if extra_options is not None:
+            extra, character_name = extra_options
+
+        jc2 = jc2_online()
+        result = jc2.analyze(
+            file_path,
+            caption_type,
+            caption_length,
+            extra,
+            character_name,
+            "",
+        ).strip()
+
+        return {"result": (result,), "ui": {"text": (result,)}}

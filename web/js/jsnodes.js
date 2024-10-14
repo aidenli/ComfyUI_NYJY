@@ -1,6 +1,11 @@
 import { app } from "../../../scripts/app.js";
 import { ComfyWidgets } from "../../../scripts/widgets.js"
-import { api } from '../../../scripts/api.js'
+
+const link = document.createElement("link")
+link.href="/extensions/ComfyUI_NYJY/css/nyjy.css"
+link.rel='stylesheet'
+link.type="text/css"
+document.head.appendChild(link)
 
 app.registerExtension({
 	name: "NYJY.jsnodes",
@@ -55,6 +60,25 @@ app.registerExtension({
 				})
 				
 				this.onResize?.(this.size);
+			}
+		} else if (nodeData.name === "JoyCaptionAlpha2Online") {
+			const onExecuted = nodeType.prototype.onExecuted;
+			nodeType.prototype.onExecuted = function (message) {
+				onExecuted?.apply(this, arguments);
+				if (this.widgets) {
+					const pos = this.widgets.findIndex((w) => w.name === "text");
+					if (pos !== -1) {
+						for (let i = pos; i < this.widgets.length; i++) {
+							this.widgets[i].onRemove?.();
+						}
+						this.widgets.length = pos;
+					}
+				}
+
+				const w = ComfyWidgets["STRING"](this, "text", ["STRING", { multiline: true }], app).widget;
+				w.inputEl.readOnly = true;
+				w.inputEl.style.opacity = 1;
+				w.value = message["text"];
 			}
 		}
 	},

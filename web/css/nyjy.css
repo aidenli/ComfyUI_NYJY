@@ -1,0 +1,55 @@
+.extra_options_float {
+    background-color: #E6E8EB;
+    width: 900px;
+    height: 650px; 
+    position: absolute; 
+    left: 50%; top: 50%; 
+    margin:-325px 0 0 -450px;
+    padding: 20px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid #DCDFE6;
+    z-index: 1000;
+}
+
+.extra_options_float--head {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 0 0 10px;
+    color: #303133;
+}
+
+.extra_options_float--option {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 0 10px;
+    color: #303133;
+    label {
+        text-align: left;
+    }
+
+    input {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        margin: 0 10px 0 0;
+    }
+}
+
+.extra_options_float--button_group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.extra_options_float--confirm-button, .extra_options_float--cancel-button {
+    border-radius: 8px;
+    width: 150px;
+    height: 40px;
+    margin: 0 10px;
+}
+
+.extra_options_float--confirm-button {
+    background-color: #409EFF;
+}
