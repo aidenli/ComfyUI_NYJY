@@ -332,7 +332,7 @@ class JoyCaptionAlpha2OnlineNode:
     RETURN_NAMES = ("captions",)
     OUTPUT_NODE = True
 
-    def run(self, image, caption_type, caption_length, extra_options):
+    def run(self, image, caption_type, caption_length, extra_options=None):
         tmp_folder = folder_paths.get_temp_directory()
         for batch_number, img in enumerate(image):
             # 只处理一张
