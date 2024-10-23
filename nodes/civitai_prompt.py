@@ -179,6 +179,30 @@ class CivitaiPromptNode:
             print_log(f"下载图片失败[{image_id}]:{e}")
             return []
 
+    def get_output_image(self, image_id):
+        image_path = os.path.join(self.output_dir, f"{image_id}.jpeg")
+        img = node_helpers.pillow(Image.open, image_path)
+
+        output_images = []
+        excluded_formats = ["MPO"]
+        for i in ImageSequence.Iterator(img):
+            i = node_helpers.pillow(ImageOps.exif_transpose, i)
+
+            if i.mode == "I":
+                i = i.point(lambda i: i * (1 / 255))
+            image = i.convert("RGB")
+
+            image = np.array(image).astype(np.float32) / 255.0
+            image = torch.from_numpy(image)[None,]
+            output_images.append(image)
+
+        if len(output_images) > 1 and img.format not in excluded_formats:
+            output_image = torch.cat(output_images, dim=0)
+        else:
+            output_image = output_images[0]
+
+        return output_image
+
     def choise_image(
         self, fixed_prompt, preview_image, mirror_sites
     ) -> tuple[str, str]:
@@ -257,27 +281,3 @@ class CivitaiPromptNode:
             "result": ("", "", []),
             "ui": {"images": previews, "positive_text": "", "negative_text": ""},
         }
-
-    def get_output_image(self, image_id):
-        image_path = os.path.join(self.output_dir, f"{image_id}.jpeg")
-        img = node_helpers.pillow(Image.open, image_path)
-
-        output_images = []
-        excluded_formats = ["MPO"]
-        for i in ImageSequence.Iterator(img):
-            i = node_helpers.pillow(ImageOps.exif_transpose, i)
-
-            if i.mode == "I":
-                i = i.point(lambda i: i * (1 / 255))
-            image = i.convert("RGB")
-
-            image = np.array(image).astype(np.float32) / 255.0
-            image = torch.from_numpy(image)[None,]
-            output_images.append(image)
-
-        if len(output_images) > 1 and img.format not in excluded_formats:
-            output_image = torch.cat(output_images, dim=0)
-        else:
-            output_image = output_images[0]
-
-        return output_image

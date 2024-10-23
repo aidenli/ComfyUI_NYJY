@@ -32,6 +32,8 @@ from .nodes.JoyTag.JoyTag import JoyTagNode
 from .nodes.JoyCaption.JoyCaption import JoyCaptionNode
 from .nodes.JoyCaption.JoyCaption import JoyCaptionAlpha2OnlineNode
 from .nodes.civitai_prompt import CivitaiPromptNode
+from .nodes.image_tools import CustomLatentImageNode
+from .nodes.number_tools import FloatSliderNode
 
 NODE_CLASS_MAPPINGS = {
     "Translate": TranslateNode,
@@ -39,6 +41,8 @@ NODE_CLASS_MAPPINGS = {
     "JoyCaption": JoyCaptionNode,
     "JoyCaptionAlpha2Online": JoyCaptionAlpha2OnlineNode,
     "CivitaiPrompt": CivitaiPromptNode,
+    "CustomLatentImage": CustomLatentImageNode,
+    "FloatSlider": FloatSliderNode,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Translate": "Translate (NYJY)",
@@ -46,6 +50,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "JoyCaption": "JoyCaption (NYJY)",
     "JoyCaptionAlpha2Online": "JoyCaptionAlpha2Online (NYJY)",
     "CivitaiPrompt": "CivitaiPrompt（NYJY）",
+    "CustomLatentImage": "CustomLatentImage（NYJY）",
+    "FloatSlider": "FloatSlider（NYJY）",
 }
 
 WEB_DIRECTORY = "./web"
