@@ -6,10 +6,12 @@ import comfy.model_management
 radio_list = [
     "自定义",
     "SDXL - 1:1 square 1024x1024",
-    "SDXL - 3:4 portrait 896x1152",
     "SDXL - 2:3 portrait 832x1216",
+    "SDXL - 3:4 portrait 896x1152",
+    "SDXL - 5:8 portrait 768x1216",
     "SDXL - 9:16 portrait 768x1344",
     "SDXL - 9:19 portrait 704x1472",
+    "SDXL - 9:21 portrait 640x1536",
     "SD1.5 - 1:1 square 512x521",
     "SD1.5 - 2:3 portrait 512x768",
     "SD1.5 - 3:4 portrait 512x682",
@@ -80,7 +82,7 @@ class CustomLatentImageNode:
         upscale_width = math.ceil(width * upscale_factor)
         upscale_height = math.ceil(height * upscale_factor)
         latent = torch.zeros(
-            [batch_size, 4, upscale_height // 8, upscale_width // 8],
+            [batch_size, 4, height // 8, width // 8],
             device=comfy.model_management.intermediate_device(),
         )
         return {

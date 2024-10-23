@@ -90,12 +90,16 @@ app.registerExtension({
 					1024,
 					1024,
 				],
+				"SDXL - 2:3 portrait 832x1216": [
+					832,
+					1216,
+				],
 				"SDXL - 3:4 portrait 896x1152": [
 					896,
 					1152,
 				],
-				"SDXL - 2:3 portrait 832x1216": [
-					832,
+				"SDXL - 5:8 portrait 768x1216": [
+					768,
 					1216,
 				],
 				"SDXL - 9:16 portrait 768x1344": [
@@ -105,6 +109,10 @@ app.registerExtension({
 				"SDXL - 9:19 portrait 704x1472": [
 					704,
 					1472,
+				],
+				"SDXL - 9:21 portrait 640x1536": [
+					640,
+					1536,
 				],
 				"SD1.5 - 1:1 square 512x521": [
 					512,
