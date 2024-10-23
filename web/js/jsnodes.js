@@ -82,7 +82,7 @@ app.registerExtension({
 				this.onResize?.(this.size);
 			}
 
-		} else if (nodeData.name === "CustomLatentImage") {
+		} else if (nodeData.name === "CustomLatentImage-NYJY") {
 			const onNodeCreated = nodeType.prototype.onNodeCreated;
 			const radio_list = {
 				"自定义": [0, 0],
@@ -198,7 +198,7 @@ app.registerExtension({
 				this.onResize?.(this.size)
 				return r
 			}
-		}else if (nodeData.name === "FloatSlider") {
+		}else if (nodeData.name === "FloatSlider-NYJY") {
 			const precisionConfig = {
 				"1": {step: 10, round:1, precision: 0},
 				"0.1": {step: 1, round:0.1, precision: 1},
@@ -225,7 +225,6 @@ app.registerExtension({
 					wMin.options.precision = confItem.precision
 					wMax.options.step = confItem.step
 					wMax.options.precision = confItem.precision
-					console.log(wNumber)
 				}
 				
 				setTimeout(updateOptions, 100)

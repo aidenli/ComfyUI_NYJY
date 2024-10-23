@@ -36,11 +36,11 @@ class CustomLatentImageNode:
                 ),
                 "width": (
                     "INT",
-                    {"default": 1216},
+                    {"default": 832},
                 ),
                 "height": (
                     "INT",
-                    {"default": 832},
+                    {"default": 1216},
                 ),
                 "upscale_factor": (
                     "FLOAT",

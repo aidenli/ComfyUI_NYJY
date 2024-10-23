@@ -41,8 +41,8 @@ NODE_CLASS_MAPPINGS = {
     "JoyCaption": JoyCaptionNode,
     "JoyCaptionAlpha2Online": JoyCaptionAlpha2OnlineNode,
     "CivitaiPrompt": CivitaiPromptNode,
-    "CustomLatentImage": CustomLatentImageNode,
-    "FloatSlider": FloatSliderNode,
+    "CustomLatentImage-NYJY": CustomLatentImageNode,
+    "FloatSlider-NYJY": FloatSliderNode,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Translate": "Translate (NYJY)",
@@ -50,8 +50,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "JoyCaption": "JoyCaption (NYJY)",
     "JoyCaptionAlpha2Online": "JoyCaptionAlpha2Online (NYJY)",
     "CivitaiPrompt": "CivitaiPrompt（NYJY）",
-    "CustomLatentImage": "CustomLatentImage（NYJY）",
-    "FloatSlider": "FloatSlider（NYJY）",
+    "CustomLatentImage-NYJY": "CustomLatentImage（NYJY）",
+    "FloatSlider-NYJY": "FloatSlider（NYJY）",
 }
 
 WEB_DIRECTORY = "./web"
