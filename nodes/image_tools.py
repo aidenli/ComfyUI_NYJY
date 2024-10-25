@@ -12,7 +12,7 @@ radio_list = [
     "SDXL - 9:16 portrait 768x1344",
     "SDXL - 9:19 portrait 704x1472",
     "SDXL - 9:21 portrait 640x1536",
-    "SD1.5 - 1:1 square 512x521",
+    "SD1.5 - 1:1 square 512x512",
     "SD1.5 - 2:3 portrait 512x768",
     "SD1.5 - 3:4 portrait 512x682",
     "SD1.5 - 16:9 cinema 910x512",

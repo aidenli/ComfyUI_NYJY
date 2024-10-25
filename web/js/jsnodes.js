@@ -195,8 +195,23 @@ app.registerExtension({
 				wHeight.callback = handlerSizeChange
 				wUpscaleFactor.callback = handleUpscaleFactor
 				wSwitch.callback = handleSwitch
+				this.size[0] = 420
 				this.onResize?.(this.size)
 				return r
+			}
+
+			const onExecuted = nodeType.prototype.onExecuted;
+			nodeType.prototype.onExecuted = function () {
+				const self = this
+				onExecuted?.apply(this, arguments);
+				const wUpscaleFactor = this.widgets[this.widgets.findIndex((w) => w.name === "upscale_factor")]
+				const wWidth = self.widgets[self.widgets.findIndex((w) => w.name === "width")]
+				const wHeight = self.widgets[self.widgets.findIndex((w) => w.name === "height")]
+				const wUpscaleWidth = self.widgets[self.widgets.findIndex((w) => w.name === "upscale_width")]
+				const wUpscaleHeight = self.widgets[self.widgets.findIndex((w) => w.name === "upscale_height")]
+				wUpscaleWidth.value = wUpscaleFactor.value * wWidth.value
+				wUpscaleHeight.value = wUpscaleFactor.value * wHeight.value
+				this.onResize?.(this.size)
 			}
 		}else if (nodeData.name === "FloatSlider-NYJY") {
 			const precisionConfig = {
