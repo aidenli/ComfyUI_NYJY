@@ -1,5 +1,8 @@
 # ComfyUI_NYJY
 ## 更新日志
+#### 2024-10-25
+- 增加了两个工具节点（CustomLatentImage-NYJY和FloatSlider-NYJY），感谢瓦里奥师兄提的需求。[使用方法](docs/images/CustomLatentImage-NYJY.png)
+
 #### 2024-10-15
 - 增加在线调用JoyCaption Alpha Two的节点，适合内存不足或者安装有困难的朋友体验，配额每日有上限（20次左右）
 - 
