@@ -7,7 +7,7 @@ huggingface_hub>=0.23.5
 accelerate
 transformers>=4.43.3
 sentencepiece
-bitsandbytes==0.43.3
+bitsandbytes>=0.43.3
 pygtrans
 fake_useragent
 lxml
