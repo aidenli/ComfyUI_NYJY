@@ -32,7 +32,7 @@ from .nodes.JoyTag.JoyTag import JoyTagNode
 from .nodes.JoyCaption.JoyCaption import JoyCaptionNode
 from .nodes.JoyCaption.JoyCaption import JoyCaptionAlpha2OnlineNode
 from .nodes.civitai_prompt import CivitaiPromptNode
-from .nodes.image_tools import CustomLatentImageNode
+from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNode
 from .nodes.number_tools import FloatSliderNode
 
 NODE_CLASS_MAPPINGS = {
@@ -42,6 +42,7 @@ NODE_CLASS_MAPPINGS = {
     "JoyCaptionAlpha2Online": JoyCaptionAlpha2OnlineNode,
     "CivitaiPrompt": CivitaiPromptNode,
     "CustomLatentImage-NYJY": CustomLatentImageNode,
+    "CustomLatentImageSimple": CustomLatentImageSimpleNode,
     "FloatSlider-NYJY": FloatSliderNode,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -51,6 +52,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "JoyCaptionAlpha2Online": "JoyCaptionAlpha2Online (NYJY)",
     "CivitaiPrompt": "CivitaiPrompt（NYJY）",
     "CustomLatentImage-NYJY": "CustomLatentImage（NYJY）",
+    "CustomLatentImageSimple": "CustomLatentImageSimple（NYJY）",
     "FloatSlider-NYJY": "FloatSlider（NYJY）",
 }
 
