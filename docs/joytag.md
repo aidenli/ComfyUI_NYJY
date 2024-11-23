@@ -23,10 +23,3 @@ safe_mode：安全模式，自动过滤tag中血腥、色情等提示词（词�
 感谢WARIO WORLD提供的图片
 
 ![alt text](images/workflow-joytag.png)
-
-#### 4 其他JoyCaption在线节点
-- JoyCaptionAlphaOneOnline
-![JoyCaptionAlphaOneOnline](images/JoyCaptionAlphaOneOnline.png)
-
-- JoyCaptionAlpha2Online
-![JoyCaptionAlphaOneOnline](images/JoyCaptionAlpha2Online.png)

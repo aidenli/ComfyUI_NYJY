@@ -38,3 +38,10 @@ newbie：新手模式（在线模式），无需下载模型直接运行，开�
 
 
 ![图片对比](images/joycaption-2.png)
+
+#### 4 其他JoyCaption在线节点
+- JoyCaptionAlphaOneOnline
+![JoyCaptionAlphaOneOnline](images/JoyCaptionAlphaOneOnline.png)
+
+- JoyCaptionAlpha2Online
+![JoyCaptionAlphaOneOnline](images/JoyCaptionAlpha2Online.png)
