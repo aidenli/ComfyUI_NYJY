@@ -11,6 +11,9 @@ config_template = {
         "hf_project": "fancyfeast/joytag",
     },
     "Google": {"proxy": ""},  # 代理地址，如：127.0.0.1:10809
+    "DeepSeek": {
+        "Key": ""
+    }
 }
 
 current_path = os.path.abspath(os.path.dirname(__file__))

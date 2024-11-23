@@ -16,7 +16,7 @@ def install_package(full_name, package_name):
 
 
 def check_and_install_packages():
-    packages = ["pygtrans", "fake_useragent", "lxml"]
+    packages = ["pygtrans", "fake_useragent", "lxml", "openai", "gradio_client"]
     for package in packages:
         package_name = re.match(r"^([^\s=<>!]+)", package.strip())
         if package_name:
@@ -30,7 +30,10 @@ check_and_install_packages()
 from .nodes.Translate import TranslateNode
 from .nodes.JoyTag.JoyTag import JoyTagNode
 from .nodes.JoyCaption.JoyCaption import JoyCaptionNode
-from .nodes.JoyCaption.JoyCaption import JoyCaptionAlpha2OnlineNode
+from .nodes.JoyCaption.JoyCaption import (
+    JoyCaptionAlpha2OnlineNode,
+    JoyCaptionAlpha1OnlineNode,
+)
 from .nodes.civitai_prompt import CivitaiPromptNode
 from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNode
 from .nodes.number_tools import FloatSliderNode
@@ -40,6 +43,7 @@ NODE_CLASS_MAPPINGS = {
     "JoyTag": JoyTagNode,
     "JoyCaption": JoyCaptionNode,
     "JoyCaptionAlpha2Online": JoyCaptionAlpha2OnlineNode,
+    "JoyCaptionAlpha1Online": JoyCaptionAlpha1OnlineNode,
     "CivitaiPrompt": CivitaiPromptNode,
     "CustomLatentImage-NYJY": CustomLatentImageNode,
     "CustomLatentImageSimple": CustomLatentImageSimpleNode,
@@ -50,6 +54,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "JoyTag": "JoyTag (NYJY)",
     "JoyCaption": "JoyCaption (NYJY)",
     "JoyCaptionAlpha2Online": "JoyCaptionAlpha2Online (NYJY)",
+    "JoyCaptionAlpha1Online": "JoyCaptionAlphaOneOnline (NYJY)",
     "CivitaiPrompt": "CivitaiPrompt（NYJY）",
     "CustomLatentImage-NYJY": "CustomLatentImage（NYJY）",
     "CustomLatentImageSimple": "CustomLatentImageSimple（NYJY）",

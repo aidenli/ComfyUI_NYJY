@@ -11,3 +11,5 @@ bitsandbytes>=0.43.3
 pygtrans
 fake_useragent
 lxml
+openai
+gradio_client

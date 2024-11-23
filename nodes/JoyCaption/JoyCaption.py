@@ -14,8 +14,7 @@ import torch
 from PIL import Image
 import numpy as np
 from pathlib import Path
-from .online import joy_caption_online
-from .jc2_online import jc2_online
+from .online import joy_caption_online, jc2_online, jc1_online
 from ..utils import create_nonceid
 import time
 import folder_paths
@@ -356,6 +355,53 @@ class JoyCaptionAlpha2OnlineNode:
             extra,
             character_name,
             "",
+        ).strip()
+
+        return {"result": (result,), "ui": {"text": (result,)}}
+
+
+class JoyCaptionAlpha1OnlineNode:
+    @classmethod
+    def INPUT_TYPES(self):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+                "caption_type": (
+                    ["descriptive", "training_prompt", "rng-tags"],
+                    {"default": "descriptive"},
+                ),
+                "caption_tone": (
+                    ["formal", "informal"],
+                    {"default": "formal"},
+                ),
+                "caption_length": (
+                    ["any", "very short", "short", "medium-length", "long", "very long"]
+                    + [str(i) for i in range(20, 261, 10)],
+                    {"default": "any"},
+                ),
+            }
+        }
+
+    CATEGORY = "NYJY/JoyCation"
+    FUNCTION = "run"
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("captions",)
+    OUTPUT_NODE = True
+
+    def run(self, image, caption_type, caption_tone, caption_length):
+        tmp_folder = folder_paths.get_temp_directory()
+        for batch_number, img in enumerate(image):
+            # 只处理一张
+            i = 255.0 * img.cpu().numpy()
+            img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+            file_name = f"{time.time()}_{create_nonceid(10)}.png"
+            file_path = os.path.join(tmp_folder, file_name)
+            img.save(file_path)
+            break
+
+        jc1 = jc1_online()
+        result = jc1.analyze(
+            file_path, caption_type, caption_tone, caption_length
         ).strip()
 
         return {"result": (result,), "ui": {"text": (result,)}}

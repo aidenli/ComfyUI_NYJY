@@ -4,8 +4,9 @@ import random
 import json
 from hashlib import md5
 from .config import LoadConfig
-from .utils import get_system_proxy
+from .utils import get_system_proxy, print_log
 from pygtrans import Translate
+from openai import OpenAI
 
 # 语言列表
 baidu_lang_list = {
@@ -81,7 +82,7 @@ class TranslateNode:
                 ),
                 "to_lang": (list(baidu_lang_list.keys()), {"default": "英语"}),
                 "text": ("STRING", {"default": "", "multiline": True}),
-                "platform": (["Google", "百度"], {"default": "百度"}),
+                "platform": (["Google", "百度", "DeepSeek"], {"default": "百度"}),
             },
             "optional": {
                 "clip": ("CLIP",),
@@ -128,14 +129,19 @@ class TranslateNode:
         result = r.json()
 
         if "error_code" in result:
-            print(f"[NYJY_Translate] exec translate failed：{json.dumps(result)}")
-            return
+            if result["error_code"] == "52003":
+                errmsg = "请在ComfyUI_NYJY/config.json文件中设置百度的API KEY，可以参考：https://github.com/aidenli/ComfyUI_NYJY/blob/main/docs/translate.md"
+            else:
+                errmsg = json.dumps(result)
+            print_log(f"[NYJY_Translate] exec translate failed：{errmsg}")
+            return "", errmsg
 
         arr_res = []
         for item in result["trans_result"]:
             arr_res.append(item["dst"])
 
-        return ("\n").join(arr_res)
+        str_res = ("\n").join(arr_res)
+        return str_res, str_res
 
     def trans_by_google(self, from_lang, to_lang, text):
         client = Translate(proxies={"https": self.proxy}, timeout=20)
@@ -148,7 +154,33 @@ class TranslateNode:
                 target=google_lang_list[to_lang],
             )
 
-        return text.translatedText
+        if text is None:
+            return "", "调用Google翻译失败"
+        else:
+            return text.translatedText, text.translatedText
+
+    def trans_by_deepseek(self, from_lang, to_lang, text):
+        config_data = LoadConfig()
+        key = config_data["DeepSeek"]["Key"]
+
+        client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
+
+        try:
+            response = client.chat.completions.create(
+                model="deepseek-chat",
+                messages=[
+                    {"role": "system", "content": "你是一个翻译助手。"},
+                    {"role": "user", "content": f"请将以下文本翻译成{to_lang}：{text}"},
+                ],
+                stream=False,
+            )
+
+            translate_str = response.choices[0].message.content
+            return translate_str, translate_str
+        except Exception as e:
+            errmsg = f"DeepSeek翻译失败：{e}"
+            print_log(errmsg)
+            return "", errmsg
 
     def run(self, from_lang, to_lang, text, platform, clip=None):
         config_data = LoadConfig()
@@ -157,13 +189,17 @@ class TranslateNode:
         self.proxy = get_system_proxy()
 
         if platform == "Google":
-            translate_str = self.trans_by_google(from_lang, to_lang, text)
+            translate_str, ui_msg = self.trans_by_google(from_lang, to_lang, text)
+        elif platform == "百度":
+            translate_str, ui_msg = self.trans_by_baidu(from_lang, to_lang, text)
+        elif platform == "DeepSeek":
+            translate_str, ui_msg = self.trans_by_deepseek(from_lang, to_lang, text)
         else:
-            translate_str = self.trans_by_baidu(from_lang, to_lang, text)
+            translate_str, ui_msg = ("", "未选择翻译平台")
 
         if clip is None:
             return {
-                "ui": {"text": (translate_str,)},
+                "ui": {"text": (ui_msg,)},
                 "result": (
                     translate_str,
                     [[]],
@@ -174,7 +210,7 @@ class TranslateNode:
         output = clip.encode_from_tokens(tokens, return_pooled=True, return_dict=True)
         cond = output.pop("cond")
         return {
-            "ui": {"text": (translate_str,)},
+            "ui": {"text": (ui_msg,)},
             "result": (
                 translate_str,
                 [[cond, output]],
