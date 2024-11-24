@@ -4,7 +4,6 @@ from pathlib import Path
 from fake_useragent import UserAgent
 from ..config import print_log
 from ..utils import create_nonceid, get_system_proxy
-from gradio_client import Client, handle_file
 
 
 class joy_caption_online:
