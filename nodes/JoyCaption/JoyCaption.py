@@ -124,7 +124,9 @@ class JoyCaptionNode:
             )
             if not os.path.exists(CLIP_PATH):
                 CLIP_PATH = os.path.join(
-                    folder_paths.get_folder_paths("clip")[0],
+                    folder_paths.get_folder_paths("clip")[0].replace(
+                        "text_encoders", "clip"
+                    ),
                     "siglip-so400m-patch14-384",
                 )
 
