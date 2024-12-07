@@ -27,3 +27,5 @@
 点击Code按钮，在弹出的浮层中点击“Download ZIP”。下载后解压到 [你的ConmfyUI目录]/custom_nodes/
 
 ![安装](docs/images/install-2.jpg)
+
+123
