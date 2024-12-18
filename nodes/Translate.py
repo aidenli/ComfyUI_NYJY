@@ -7,6 +7,7 @@ from .config import LoadConfig
 from .utils import get_system_proxy, print_log
 from pygtrans import Translate
 from openai import OpenAI
+import hashlib
 
 # 语言列表
 baidu_lang_list = {
@@ -66,6 +67,15 @@ google_lang_list = {
     "繁体中文": "zh-TW",
     "越南语": "vi",
 }
+
+cache_result = {}
+
+def create_mission_key(from_lang, to_lang, text, platform):
+    srouce = f"{from_lang}-{to_lang}-{text}-{platform}"
+    input_bytes = srouce.encode('utf-8')
+    md5_hash = hashlib.md5()
+    md5_hash.update(input_bytes)
+    return md5_hash.hexdigest()
 
 
 class TranslateNode:
@@ -141,7 +151,7 @@ class TranslateNode:
             arr_res.append(item["dst"])
 
         str_res = ("\n").join(arr_res)
-        return str_res, str_res
+        return str_res, ""
 
     def trans_by_google(self, from_lang, to_lang, text):
         client = Translate(proxies={"https": self.proxy}, timeout=20)
@@ -157,7 +167,7 @@ class TranslateNode:
         if text is None:
             return "", "调用Google翻译失败"
         else:
-            return text.translatedText, text.translatedText
+            return text.translatedText, ""
 
     def trans_by_deepseek(self, from_lang, to_lang, text):
         config_data = LoadConfig()
@@ -176,7 +186,7 @@ class TranslateNode:
             )
 
             translate_str = response.choices[0].message.content
-            return translate_str, translate_str
+            return translate_str, ""
         except Exception as e:
             errmsg = f"DeepSeek翻译失败：{e}"
             print_log(errmsg)
@@ -188,14 +198,25 @@ class TranslateNode:
         self.appkey = config_data["Baidu"]["Secret"]
         self.proxy = get_system_proxy()
 
-        if platform == "Google":
-            translate_str, ui_msg = self.trans_by_google(from_lang, to_lang, text)
-        elif platform == "百度":
-            translate_str, ui_msg = self.trans_by_baidu(from_lang, to_lang, text)
-        elif platform == "DeepSeek":
-            translate_str, ui_msg = self.trans_by_deepseek(from_lang, to_lang, text)
+        mission_key = create_mission_key(from_lang, to_lang, text, platform)
+        ui_msg = ""
+        translate_str = ""
+
+        if mission_key in cache_result:
+            print_log("命中缓存")
+            translate_str = cache_result[mission_key]
         else:
-            translate_str, ui_msg = ("", "未选择翻译平台")
+            if platform == "Google":
+                translate_str, ui_msg = self.trans_by_google(from_lang, to_lang, text)
+            elif platform == "百度":
+                translate_str, ui_msg = self.trans_by_baidu(from_lang, to_lang, text)
+            elif platform == "DeepSeek":
+                translate_str, ui_msg = self.trans_by_deepseek(from_lang, to_lang, text)
+            else:
+                translate_str, ui_msg = ("", "未选择翻译平台")
+
+            if translate_str is not "":
+                cache_result[mission_key] = translate_str
 
         if clip is None:
             return {

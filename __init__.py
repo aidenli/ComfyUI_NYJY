@@ -37,6 +37,9 @@ from .nodes.JoyCaption.JoyCaption import (
 from .nodes.civitai_prompt import CivitaiPromptNode
 from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNode
 from .nodes.number_tools import FloatSliderNode
+from .nodes.logics.array_fn import GetItemFromList
+from .nodes.logics.json_fn import JsonLoads, JsonDumps
+from .nodes.logics.strings_fn import SplitString, ConverAnyToString
 
 NODE_CLASS_MAPPINGS = {
     "Translate": TranslateNode,
@@ -48,6 +51,11 @@ NODE_CLASS_MAPPINGS = {
     "CustomLatentImage-NYJY": CustomLatentImageNode,
     "CustomLatentImageSimple": CustomLatentImageSimpleNode,
     "FloatSlider-NYJY": FloatSliderNode,
+    "GetItemFromList": GetItemFromList,
+    "JsonLoads": JsonLoads,
+    "JsonDumps": JsonDumps,
+    "SplitString": SplitString,
+    "ConverAnyToString": ConverAnyToString,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Translate": "Translate (NYJY)",
@@ -59,6 +67,11 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CustomLatentImage-NYJY": "CustomLatentImage（NYJY）",
     "CustomLatentImageSimple": "CustomLatentImageSimple（NYJY）",
     "FloatSlider-NYJY": "FloatSlider（NYJY）",
+    "GetItemFromList": "GetItemFromList（NYJY）",
+    "JsonLoads": "JsonLoads（NYJY）",
+    "JsonDumps": "JsonDumps（NYJY）",
+    "SplitString": "SplitString（NYJY）",
+    "ConverAnyToString": "ConverAnyToString（NYJY）",
 }
 
 WEB_DIRECTORY = "./web"

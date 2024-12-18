@@ -82,3 +82,13 @@ def save_image_bytes_for_preview(image, output_dir: str = None, prefix=None):
 def print_log(str_msg):
     str_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"[NYJY][{str_time}][{stack()[1][1]}, line: {stack()[1][2]}]: {str_msg}")
+
+
+class AnyType(str):
+    """A special class that is always equal in not equal comparisons. Credit to pythongosssss"""
+
+    def __ne__(self, __value: object) -> bool:
+        return False
+
+
+any_type = AnyType("*")

@@ -21,67 +21,29 @@ app.registerExtension({
 
 				if (this.widgets) {
 					const pos = this.widgets.findIndex((w) => w.name === "preview_text");
+					let w;
 					if (pos !== -1) {
-						for (let i = pos; i < this.widgets.length; i++) {
-							this.widgets[i].onRemove?.();
+						if (message["text"][0] !== "") {
+							w = this.widgets[pos]
+							w.value = message["text"][0];
+						} else {
+							for (let i = pos; i < this.widgets.length; i++) {
+								this.widgets[i].onRemove?.();
+							}
+							this.widgets.length = pos;
 						}
-						this.widgets.length = pos;
+					} else {
+						if (message["text"][0] !== "") {
+							w = ComfyWidgets["STRING"](this, "preview_text", ["STRING", { multiline: true }], app).widget;
+							w.inputEl.readOnly = true;
+							w.inputEl.style.opacity = 1;
+							w.value = message["text"][0];
+						}
 					}
 				}
 
-				const w = ComfyWidgets["STRING"](this, "preview_text", ["STRING", { multiline: true }], app).widget;
-				w.inputEl.readOnly = true;
-				w.inputEl.style.opacity = 1;
-				w.value = message.text;
-
 				this.onResize?.(this.size);
 			}
-		} else if (nodeData.name === "CivitaiPrompt") {
-			const onExecuted = nodeType.prototype.onExecuted;
-			nodeType.prototype.onExecuted = function (message) {
-				onExecuted?.apply(this, arguments);
-
-				if (this.widgets) {
-					const pos = this.widgets.findIndex((w) => w.name === "positive_text");
-					if (pos !== -1) {
-						for (let i = pos; i < this.widgets.length; i++) {
-							this.widgets[i].onRemove?.();
-						}
-						this.widgets.length = pos;
-					}
-				}
-
-				["positive_text", "negative_text"].forEach(str => {
-					console.log(message[str])
-					const w = ComfyWidgets["STRING"](this, str, ["STRING", { multiline: true }], app).widget;
-					w.inputEl.readOnly = true;
-					w.inputEl.style.opacity = 1;
-					w.value = message[str];
-				})
-
-				this.onResize?.(this.size);
-			}
-		} else if (nodeData.name === "JoyCaptionAlpha2Online") {
-			const onExecuted = nodeType.prototype.onExecuted;
-			nodeType.prototype.onExecuted = function (message) {
-				onExecuted?.apply(this, arguments);
-				if (this.widgets) {
-					const pos = this.widgets.findIndex((w) => w.name === "text");
-					if (pos !== -1) {
-						for (let i = pos; i < this.widgets.length; i++) {
-							this.widgets[i].onRemove?.();
-						}
-						this.widgets.length = pos;
-					}
-				}
-
-				const w = ComfyWidgets["STRING"](this, "text", ["STRING", { multiline: true }], app).widget;
-				w.inputEl.readOnly = true;
-				w.inputEl.style.opacity = 1;
-				w.value = message["text"];
-				this.onResize?.(this.size);
-			}
-
 		} else if (nodeData.name === "CustomLatentImage-NYJY") {
 			const onNodeCreated = nodeType.prototype.onNodeCreated;
 			const radio_list = {
@@ -184,8 +146,8 @@ app.registerExtension({
 
 				function handlerRadio() {
 					let [width, height] = radio_list[this.value]
-					if (wSwitch.value){
-						[width, height] = [ height,width]
+					if (wSwitch.value) {
+						[width, height] = [height, width]
 					}
 					refreshSize(width, height)
 				}
@@ -200,25 +162,12 @@ app.registerExtension({
 				return r
 			}
 
-			const onExecuted = nodeType.prototype.onExecuted;
-			nodeType.prototype.onExecuted = function () {
-				const self = this
-				onExecuted?.apply(this, arguments);
-				const wUpscaleFactor = this.widgets[this.widgets.findIndex((w) => w.name === "upscale_factor")]
-				const wWidth = self.widgets[self.widgets.findIndex((w) => w.name === "width")]
-				const wHeight = self.widgets[self.widgets.findIndex((w) => w.name === "height")]
-				const wUpscaleWidth = self.widgets[self.widgets.findIndex((w) => w.name === "upscale_width")]
-				const wUpscaleHeight = self.widgets[self.widgets.findIndex((w) => w.name === "upscale_height")]
-				wUpscaleWidth.value = wUpscaleFactor.value * wWidth.value
-				wUpscaleHeight.value = wUpscaleFactor.value * wHeight.value
-				this.onResize?.(this.size)
-			}
-		}else if (nodeData.name === "FloatSlider-NYJY") {
+		} else if (nodeData.name === "FloatSlider-NYJY") {
 			const precisionConfig = {
-				"1": {step: 10, round:1, precision: 0},
-				"0.1": {step: 1, round:0.1, precision: 1},
-				"0.01": {step: 0.1, round:0.01, precision: 2},
-				"0.001": {step: 0.01, round:0.001,precision: 3},
+				"1": { step: 10, round: 1, precision: 0 },
+				"0.1": { step: 1, round: 0.1, precision: 1 },
+				"0.01": { step: 0.1, round: 0.01, precision: 2 },
+				"0.001": { step: 0.01, round: 0.001, precision: 3 },
 			}
 			const onNodeCreated = nodeType.prototype.onNodeCreated
 			nodeType.prototype.onNodeCreated = function () {
@@ -229,7 +178,7 @@ app.registerExtension({
 				const wPrecision = this.widgets[this.widgets.findIndex((w) => w.name === "precision")]
 
 				// step对slider的增量无效，但是对精度有影响，step需要配合precision、round一起设置，并且step是预设值x10
-				function updateOptions(){
+				function updateOptions() {
 					const confItem = precisionConfig[wPrecision.value]
 					wNumber.options.min = wMin.value
 					wNumber.options.max = wMax.value
@@ -241,41 +190,27 @@ app.registerExtension({
 					wMax.options.step = confItem.step
 					wMax.options.precision = confItem.precision
 				}
-				
+
 				setTimeout(updateOptions, 100)
 
-				wMin.callback = function(){
+				wMin.callback = function () {
 					if (wMin.value >= wMax.value) {
 						wMin.value = wMax.value
 					}
 					updateOptions()
 				}
-				wMax.callback = function(){
+				wMax.callback = function () {
 					if (wMin.value >= wMax.value) {
 						wMax.value = wMin.value
 					}
 					updateOptions()
 				}
 
-				wPrecision.callback = function(){
+				wPrecision.callback = function () {
 					updateOptions()
 				}
 				return r
 			}
 		}
-	},
-	async nodeCreated(node) {
-		// console.log(node.comfyClass)
-		// setTimeout(() => {
-		// 	console.log(node)
-		// 	if(node.type === "CustomLatentImage") {
-		// 		console.log(arguments[0].type)
-		// 		const wRadio = node.widgets[node.widgets.findIndex((w) => w.name === "radio")];
-		// 		wRadio.callback = () => {
-		// 			console.log("aaaaaaaaaaaaaaaaaaaaa")
-		// 		}
-		// 	}
-		// }, 0)
-
 	}
 })

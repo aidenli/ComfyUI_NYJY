@@ -406,4 +406,4 @@ class JoyCaptionAlpha1OnlineNode:
             file_path, caption_type, caption_tone, caption_length
         ).strip()
 
-        return {"result": (result,), "ui": {"text": (result,)}}
+        return {"result": (result,)}
