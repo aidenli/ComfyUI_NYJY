@@ -13,6 +13,7 @@ import node_helpers
 import torch
 import numpy as np
 from PIL import Image, ImageOps, ImageSequence, ImageFile
+from requests_html import AsyncHTMLSession
 
 
 class CivitaiPromptNode:
@@ -133,11 +134,11 @@ class CivitaiPromptNode:
             return []
 
     def get_image_detail(self, image_id) -> tuple[str, str, int]:
-        req_data = {"json": {"id": image_id}}
-
+        #req_data = {"json": {"id": image_id}}
+        req_str = quote(json.dumps({"json":{"id":image_id}})).replace("%20", "")
         try:
             response = self.__session.get(
-                f"https://{self.__host}/api/trpc/image.getGenerationData?input={quote(json.dumps(req_data))}",
+                f"https://{self.__host}/api/trpc/image.getGenerationData?input={req_str}",
                 timeout=10,
             )
             json_rsp = json.loads(response.text)
@@ -161,23 +162,30 @@ class CivitaiPromptNode:
 
     def get_image(self, image_id):
         try:
+            # get hash
             response = self.__session.get(
-                f"https://{self.__host}/images/{image_id}", timeout=10
+                "https://raw.githubusercontent.com/aidenli/c_pre/refs/heads/main/hash.txt", timeout=10
             )
-            tree = html.fromstring(response.text)
-            results = tree.xpath(
-                "//div[contains(@class,'mantine-Carousel-slide')]//img[1]/@src"
+            hash = response.text
+            print(hash)
+            req_str = quote(json.dumps({"json":{"id":image_id}})).replace("%20", "")
+            print(f"https://{self.__host}/api/trpc/image.get?input={req_str}")
+            response = requests.get(
+                f"https://{self.__host}/api/trpc/image.get?input={req_str}", timeout=10
             )
-            if len(results) > 0:
-                img_url = results[0].replace("original=true", "width=450")
-                print_log(f"下载图片: {img_url}")
-                img_response = self.__session.get(img_url, timeout=20)
-                if img_response.status_code == 200:
-                    return img_response.content
+            print(response.text)
+            json_rsp = json.loads(response.text)
+            image_hash_id = json_rsp["result"]["data"]["json"]["url"]
+            img_url = f"https://image.{self.__host}/{hash}/{image_hash_id}/width=450/{image_id}.jpeg"
+            print(img_url)
+            print_log(f"下载图片: {img_url}")
+            img_response = self.__session.get(img_url, timeout=20)
+            if img_response.status_code == 200:
+                return img_response.content
             return None
         except Exception as e:
             print_log(f"下载图片失败[{image_id}]:{e}")
-            return []
+            return None
 
     def get_output_image(self, image_id):
         image_path = os.path.join(self.output_dir, f"{image_id}.jpeg")
@@ -250,14 +258,16 @@ class CivitaiPromptNode:
                 self.__cache_positive = positive
                 self.__cache_negative = negative
                 if preview_image:
-                    print_log(f"获取图片[{image_id}]的内容")
-                    image_content = self.get_image(image_id)
+                    # print_log(f"获取图片[{image_id}]的内容")
+                    # image_content = self.get_image(image_id)
 
-                    # 保存图片到output目录
-                    with open(
-                        os.path.join(self.output_dir, f"{image_id}.jpeg"), "wb"
-                    ) as f:
-                        f.write(image_content)
+                    # if image_content is not None:
+                    #     # 保存图片到output目录
+                    #     with open(
+                    #         os.path.join(self.output_dir, f"{image_id}.jpeg"), "wb"
+                    #     ) as f:
+                    #         f.write(image_content)
+
                     # 保存提示词
                     with open(
                         os.path.join(self.output_dir, f"{image_id}_prmopt.txt"), "w"
@@ -266,7 +276,7 @@ class CivitaiPromptNode:
                         if len(negative) > 0:
                             f.write(f"\n\n---------------------\nnegative:\n{negative}")
 
-                    previews = [save_image_bytes_for_preview(image_content)]
+                    previews = [] # [save_image_bytes_for_preview(image_content)]
                     self.__cache_previews = previews
                 return {
                     "result": (positive, negative, self.get_output_image(image_id)),
