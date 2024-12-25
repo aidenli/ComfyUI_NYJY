@@ -13,7 +13,6 @@ import node_helpers
 import torch
 import numpy as np
 from PIL import Image, ImageOps, ImageSequence, ImageFile
-from requests_html import AsyncHTMLSession
 
 
 class CivitaiPromptNode:
