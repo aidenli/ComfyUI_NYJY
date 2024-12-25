@@ -188,6 +188,7 @@ class CivitaiPromptNode:
             return None
 
     def get_output_image(self, image_id):
+        return None
         image_path = os.path.join(self.output_dir, f"{image_id}.jpeg")
         img = node_helpers.pillow(Image.open, image_path)
 
