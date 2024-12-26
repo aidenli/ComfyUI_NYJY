@@ -159,7 +159,7 @@ class CivitaiPromptNode:
 
     def get_image(self, image_id, image_url):
         try:
-            response = self.__session.get("https://raw.githubusercontent.com/aidenli/c_pre/refs/heads/main/hash.txt")
+            response = self.__session.get("https://gitee.com/hurricant/c_pre/raw/master/hash.md")
             image_hash = response.text.strip()
             img_url = f"https://image.{self.__host}/{image_hash}/{image_url}/width=450/{image_id}.jpeg"
             print(img_url)
@@ -261,13 +261,16 @@ class CivitaiPromptNode:
 
                     # 保存提示词
                     with open(
-                        os.path.join(self.output_dir, f"{image_id}_prmopt.txt"), "w"
+                        os.path.join(self.output_dir, f"{image_id}_prmopt.txt"), "w", encoding="utf-8"
                     ) as f:
                         f.write(f"positive:\n{positive}")
                         if len(negative) > 0:
                             f.write(f"\n\n---------------------\nnegative:\n{negative}")
 
-                    previews = [save_image_bytes_for_preview(image_content)]
+                    if image_content is not None:
+                        previews = [save_image_bytes_for_preview(image_content)]
+                    else:
+                        previews = []
                     self.__cache_previews = previews
                 return {
                     "result": (positive, negative, self.get_output_image(image_id)),
