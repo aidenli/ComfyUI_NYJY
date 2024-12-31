@@ -21,6 +21,7 @@ class CivitaiPromptNode:
     __cache_positive = ""
     __cache_negative = ""
     __cache_previews = []
+    __cache_sort_type = ""
     output_dir = ""
 
     def __init__(self) -> None:
@@ -38,18 +39,19 @@ class CivitaiPromptNode:
                 "fixed_prompt": ("BOOLEAN", {"default": True}),
                 "preview_image": ("BOOLEAN", {"default": True}),
                 "mirror_sites": ("BOOLEAN", {"default": False}),
+                "sort_type": (["Most Reactions", "Most Comments", "Most Collected", "Oldest"], {"default": "Most Reactions"})
             },
         }
 
     @classmethod
-    def IS_CHANGED(self, fixed_prompt, preview_image, mirror_sites):
+    def IS_CHANGED(self, fixed_prompt, preview_image, mirror_sites, sort_type):
         if fixed_prompt:
             return self.__cache_id
         else:
             return random.random()
 
-    RETURN_TYPES = ("STRING", "STRING", "IMAGE")
-    RETURN_NAMES = ("positive", "negative", "image")
+    RETURN_TYPES = ("STRING", "STRING", "IMAGE", "STRING")
+    RETURN_NAMES = ("positive", "negative", "image", "image_id")
     FUNCTION = "choise_image"
     OUTPUT_NODE = True
     CATEGORY = "NYJY/text"
@@ -79,13 +81,13 @@ class CivitaiPromptNode:
             "user-agent": ua.random,
         }
 
-    def req_list(self, next_cursor=None):
+    def req_list(self, next_cursor=None, sort_type=""):
         if next_cursor is None:
             req_data = {
                 "json": {
                     "useIndex": True,
                     "period": "Day",
-                    "sort": "Most Reactions",
+                    "sort": sort_type,
                     "types": ["image"],
                     "withMeta": False,
                     "browsingLevel": 1,
@@ -99,7 +101,7 @@ class CivitaiPromptNode:
                 "json": {
                     "useIndex": True,
                     "period": "Day",
-                    "sort": "Most Reactions",
+                    "sort": sort_type,
                     "types": ["image"],
                     "withMeta": False,
                     "browsingLevel": 1,
@@ -203,14 +205,22 @@ class CivitaiPromptNode:
             return None
 
     def choise_image(
-        self, fixed_prompt, preview_image, mirror_sites
+        self, fixed_prompt, preview_image, mirror_sites, sort_type
     ) -> tuple[str, str]:
         self.init_request(mirror_sites)
         previews = []
 
-        if len(self.__image_list) < 10:
-            print_log(f"获取图片列表")
-            self.__image_list += self.req_list(self.__next_cursor)
+        if self.__cache_sort_type != sort_type:
+            self.__image_list = []
+            self.__cache_sort_type = sort_type
+
+        if len(self.__image_list) < 20:
+            n = 0
+            while n < 5: 
+                n += 1
+                print_log(f"获取图片列表: {self.__next_cursor}")
+                new_images = self.req_list(self.__next_cursor, sort_type)
+                self.__image_list += new_images
 
         # 如果是保持提示词并且有缓存的图片id，则使用缓存图片id的数据
         if fixed_prompt and self.__cache_id is not None:
@@ -220,6 +230,7 @@ class CivitaiPromptNode:
                     self.__cache_positive,
                     self.__cache_negative,
                     self.get_output_image(self.__cache_id),
+                    self.__cache_id,
                 ),
                 "ui": {
                     "images": self.__cache_previews,
@@ -230,7 +241,7 @@ class CivitaiPromptNode:
 
         if len(self.__image_list) == 0:
             return {
-                "result": ("", "", []),
+                "result": ("", "", [], "",),
                 "ui": {"images": previews, "positive_text": "", "negative_text": ""},
             }
 
@@ -252,20 +263,24 @@ class CivitaiPromptNode:
                     print_log(f"获取图片[{image_id}]的内容")
                     image_content = self.get_image(image_id, image_url)
 
-                    if image_content is not None:
-                        # 保存图片到output目录
-                        with open(
-                            os.path.join(self.output_dir, f"{image_id}.jpeg"), "wb"
-                        ) as f:
-                            f.write(image_content)
+                    try:
+                        if image_content is not None:
+                            # 保存图片到output目录
+                            with open(
+                                os.path.join(self.output_dir, f"{image_id}.jpeg"), "wb"
+                            ) as f:
+                                f.write(image_content)
 
-                    # 保存提示词
-                    with open(
-                        os.path.join(self.output_dir, f"{image_id}_prmopt.txt"), "w", encoding="utf-8"
-                    ) as f:
-                        f.write(f"positive:\n{positive}")
-                        if len(negative) > 0:
-                            f.write(f"\n\n---------------------\nnegative:\n{negative}")
+                        # 保存提示词
+                        with open(
+                            os.path.join(self.output_dir, f"{image_id}_prmopt.txt"), "w", encoding="utf-8"
+                        ) as f:
+                            f.write(f"positive:\n{positive}")
+                            if len(negative) > 0:
+                                f.write(f"\n\n---------------------\nnegative:\n{negative}")
+                    except Exception as e:
+                        # 此处出错不影响后续流程
+                        print_log(f"保存取图片失败[{image_id}]:{e}")
 
                     if image_content is not None:
                         previews = [save_image_bytes_for_preview(image_content)]
@@ -273,7 +288,7 @@ class CivitaiPromptNode:
                         previews = []
                     self.__cache_previews = previews
                 return {
-                    "result": (positive, negative, self.get_output_image(image_id)),
+                    "result": (positive, negative, self.get_output_image(image_id), image_id),
                     "ui": {
                         "images": previews,
                         "positive_text": (positive,),
@@ -282,6 +297,6 @@ class CivitaiPromptNode:
                 }
 
         return {
-            "result": ("", "", []),
+            "result": ("", "", [], "",),
             "ui": {"images": previews, "positive_text": "", "negative_text": ""},
         }
