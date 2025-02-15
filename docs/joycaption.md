@@ -4,7 +4,7 @@
 
 插件运行时会自动下载两个模型，也可以手动下载放到对应路径中：
 
-- CLIP模型：[google/siglip-so400m-patch14-384]( https://huggingface.co/google/siglip-so400m-patch14-384/tree/main )，下载后将存放到此路径：[comfyui_project]/models/clip/siglip-so400m-patch14-384
+- CLIP模型：[google/siglip-so400m-patch14-384]( https://huggingface.co/google/siglip-so400m-patch14-384/tree/main )，下载后将存放到此路径：[comfyui_project]/models/clip_vision/siglip-so400m-patch14-384
 
 - 大语言模型：[unsloth/Meta-Llama-3.1-8B-bnb-4bit]( https://huggingface.co/unsloth/Meta-Llama-3.1-8B-bnb-4bit/tree/main )，下载后将存放到此路径：[comfyui_project]/models/llm/Meta-Llama-3.1-8B-bnb-4bit
 
