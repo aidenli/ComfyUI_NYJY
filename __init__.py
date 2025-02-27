@@ -24,7 +24,7 @@ def check_and_install_packages():
 
 
 # 检查 requirements.txt 文件中的包
-check_and_install_packages()
+# check_and_install_packages()
 
 
 from .nodes.Translate import TranslateNode
