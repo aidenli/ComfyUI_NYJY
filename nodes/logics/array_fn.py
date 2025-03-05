@@ -15,7 +15,7 @@ class GetItemFromList:
         }
 
     RETURN_TYPES = ("any_type",)
-    RETURN_NAMES = ("STRING",)
+    RETURN_NAMES = ("item",)
     FUNCTION = "run"
     CATEGORY = "NYJY/logic"
 

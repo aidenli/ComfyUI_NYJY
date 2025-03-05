@@ -39,7 +39,7 @@ from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNod
 from .nodes.number_tools import FloatSliderNode
 from .nodes.logics.array_fn import GetItemFromList
 from .nodes.logics.json_fn import JsonLoads, JsonDumps
-from .nodes.logics.strings_fn import SplitString, ConverStringToNumber
+from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, ConvertAnyToString
 
 NODE_CLASS_MAPPINGS = {
     "Translate": TranslateNode,
@@ -55,7 +55,8 @@ NODE_CLASS_MAPPINGS = {
     "JsonLoads": JsonLoads,
     "JsonDumps": JsonDumps,
     "SplitString": SplitString,
-    "ConverStringToNumber": ConverStringToNumber
+    "ConvertStringToNumber": ConvertStringToNumber,
+    "ConvertAnyToString": ConvertAnyToString
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -72,7 +73,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "JsonLoads": "JsonLoads（NYJY）",
     "JsonDumps": "JsonDumps（NYJY）",
     "SplitString": "SplitString（NYJY）",
-    "ConverStringToNumber": "ConverStringToNumber（NYJY）"
+    "ConvertStringToNumber": "ConvertStringToNumber（NYJY）",
+    "ConvertAnyToString": "ConvertAnyToString（NYJY）"
 }
 
 WEB_DIRECTORY = "./web"

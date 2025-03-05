@@ -1,5 +1,7 @@
 import json
+from ..classes import AnyType
 
+any_type = AnyType("*")
 
 class SplitString:
     @classmethod
@@ -21,7 +23,7 @@ class SplitString:
         return (input.split(separator),)
 
 
-class ConverStringToNumber:
+class ConvertStringToNumber:
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -39,3 +41,27 @@ class ConverStringToNumber:
 
     def run(self, input):
         return (int(input), float(input))
+
+
+class ConvertAnyToString:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "obj": (any_type,),
+            },
+        }
+
+    RETURN_TYPES = (
+        "STRING",
+    )
+    FUNCTION = "run"
+    CATEGORY = "NYJY/logic"
+
+    def run(self, obj):
+        try:
+            # 使用 str() 函数将对象转换为字符串
+            return (str(obj), )
+        except Exception as e:
+            # 如果转换失败，捕获异常并返回错误信息
+            return ("", )
