@@ -1,5 +1,6 @@
 # ComfyUI_NYJY
 ## 更新日志
+#### 2025-03-05 增加了一些逻辑处理节点（字符串转json，根据索引获取数组元素等，主要用于for循环）
 #### 2024-11-23 增加Joycaption One在线节点
 
 [全部更新历史](docs/update_log.md)
