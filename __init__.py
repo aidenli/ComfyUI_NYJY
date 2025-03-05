@@ -39,7 +39,7 @@ from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNod
 from .nodes.number_tools import FloatSliderNode
 from .nodes.logics.array_fn import GetItemFromList
 from .nodes.logics.json_fn import JsonLoads, JsonDumps
-from .nodes.logics.strings_fn import SplitString, ConverAnyToString
+from .nodes.logics.strings_fn import SplitString, ConverStringToNumber
 
 NODE_CLASS_MAPPINGS = {
     "Translate": TranslateNode,
@@ -55,8 +55,9 @@ NODE_CLASS_MAPPINGS = {
     "JsonLoads": JsonLoads,
     "JsonDumps": JsonDumps,
     "SplitString": SplitString,
-    "ConverAnyToString": ConverAnyToString,
+    "ConverStringToNumber": ConverStringToNumber
 }
+
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Translate": "Translate (NYJY)",
     "JoyTag": "JoyTag (NYJY)",
@@ -67,11 +68,11 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CustomLatentImage-NYJY": "CustomLatentImage（NYJY）",
     "CustomLatentImageSimple": "CustomLatentImageSimple（NYJY）",
     "FloatSlider-NYJY": "FloatSlider（NYJY）",
-    # "GetItemFromList": "GetItemFromList（NYJY）",
-    # "JsonLoads": "JsonLoads（NYJY）",
-    # "JsonDumps": "JsonDumps（NYJY）",
-    # "SplitString": "SplitString（NYJY）",
-    # "ConverAnyToString": "ConverAnyToString（NYJY）",
+    "GetItemFromList": "GetItemFromList（NYJY）",
+    "JsonLoads": "JsonLoads（NYJY）",
+    "JsonDumps": "JsonDumps（NYJY）",
+    "SplitString": "SplitString（NYJY）",
+    "ConverStringToNumber": "ConverStringToNumber（NYJY）"
 }
 
 WEB_DIRECTORY = "./web"

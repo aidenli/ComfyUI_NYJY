@@ -6,17 +6,17 @@ class JsonLoads:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "input": ("STRING",),
+                "input": ("STRING", {"default": "", "multiline": True}),
             },
         }
 
     RETURN_TYPES = ("any_type",)
-    RETURN_NAMES = ("result",)
+    RETURN_NAMES = ("json",)
     FUNCTION = "run"
     CATEGORY = "NYJY/logic"
 
     def run(self, input):
-        return json.loads(input)
+        return (json.loads(input),)
 
 
 class JsonDumps:
@@ -34,4 +34,4 @@ class JsonDumps:
     CATEGORY = "NYJY/logic"
 
     def run(self, json_data):
-        return json.dumps(json_data)
+        return (json.dumps(json_data),)

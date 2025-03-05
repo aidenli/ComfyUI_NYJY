@@ -1,5 +1,5 @@
 from .type_tools import is_array
-from ..utils import AnyType
+from ..classes import AnyType
 
 any_type = AnyType("*")
 
@@ -15,12 +15,14 @@ class GetItemFromList:
         }
 
     RETURN_TYPES = ("any_type",)
-    RETURN_NAMES = ("result",)
+    RETURN_NAMES = ("STRING",)
     FUNCTION = "run"
     CATEGORY = "NYJY/logic"
 
     def run(self, array, index):
         if is_array(array):
             if index >= len(array):
-                return None
-            return array[index]
+                return ("",)
+            return (array[index],)
+        else:
+            return (array,)

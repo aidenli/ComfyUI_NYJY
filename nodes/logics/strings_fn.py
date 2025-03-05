@@ -15,27 +15,10 @@ class SplitString:
     RETURN_NAMES = ("result",)
     FUNCTION = "run"
     CATEGORY = "NYJY/logic"
+    OUTPUT_IS_LIST = (True, )
 
     def run(self, input, separator):
-        return input.split(separator)
-
-
-class ConverAnyToString:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "input": ("any_type",),
-            },
-        }
-
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("result",)
-    FUNCTION = "run"
-    CATEGORY = "NYJY/logic"
-
-    def run(self, input):
-        return json.loads(input)
+        return (input.split(separator),)
 
 
 class ConverStringToNumber:
