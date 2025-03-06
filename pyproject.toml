@@ -1,7 +1,7 @@
 [project]
 name = "comfyui_nyjy"
 description = "A comfyui node that provides translation and image reverse push functions(JoyTag & JoyCaption)."
-version = "1.8.11"
+version = "1.8.13"
 license = {file = "LICENSE"}
 dependencies = ["torch", "torchvision>=0.15.2", "einops>=0.7.0", "safetensors>=0.4.1", "pillow>=9.4.0", "huggingface_hub>=0.23.5", "accelerate", "transformers>=4.43.3", "sentencepiece", "bitsandbytes>=0.43.3", "pygtrans", "fake_useragent", "lxml", "openai", "gradio_client"]
 

@@ -154,20 +154,25 @@ class TranslateNode:
         return str_res, ""
 
     def trans_by_google(self, from_lang, to_lang, text):
-        client = Translate(proxies={"https": self.proxy}, timeout=20)
-        if from_lang == "自动":
-            text = client.translate(text, target=google_lang_list[to_lang])
+        if self.proxy is not None:
+            if "http://" not in self.proxy and "https://" not in self.proxy:
+                self.proxy = f"http://{self.proxy}" 
+            client = Translate(proxies={"https": self.proxy}, timeout=20)
         else:
-            text = client.translate(
+            client = Translate(timeout=20)
+        if from_lang == "自动":
+            result = client.translate(text, target=google_lang_list[to_lang])
+        else:
+            result = client.translate(
                 text,
                 source=google_lang_list[from_lang],
                 target=google_lang_list[to_lang],
             )
 
-        if text is None:
+        if result is None:
             return "", "调用Google翻译失败"
         else:
-            return text.translatedText, ""
+            return result.translatedText, ""
 
     def trans_by_deepseek(self, from_lang, to_lang, text):
         config_data = LoadConfig()
@@ -194,8 +199,8 @@ class TranslateNode:
 
     def run(self, from_lang, to_lang, text, platform, clip=None):
         config_data = LoadConfig()
-        self.appid = config_data["Baidu"]["AppId"]
-        self.appkey = config_data["Baidu"]["Secret"]
+        self.appid = config_data["Baidu"]["AppId"] if "Baidu" in config_data else ""
+        self.appkey = config_data["Baidu"]["Secret"] if "Baidu" in config_data else ""
         self.proxy = get_system_proxy()
 
         mission_key = create_mission_key(from_lang, to_lang, text, platform)

@@ -5,7 +5,7 @@ import time
 
 current_path = os.path.abspath(os.path.dirname(__file__))
 config_path = os.path.join(current_path, "../config.json")
-config_data = {}
+config_data = None
 
 def LoadConfig():
     global config_data
