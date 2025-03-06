@@ -1,0 +1,14 @@
+{
+    "Baidu": {
+        "AppId": "APPID",
+        "Secret": "SECRET"
+    },
+    "joytag": {
+        "model_download": "https://hf-mirror.com/fancyfeast/joytag/tree/main",
+        "hf_project": "fancyfeast/joytag",
+    },
+    "Google": {"proxy": ""}, 
+    "DeepSeek": {
+        "Key": ""
+    }
+}
