@@ -6,7 +6,7 @@
 [全部更新历史](docs/update_log.md)
 
 ## 节点列表
-#### [Translate -- 翻译节点，对接谷歌翻译和百度翻译，支持多语言。（点击查看详细）](docs/translate.md)
+#### [Translate -- 翻译节点，对接谷歌翻译和百度翻译，支持多语言。（重要：百度翻译节点配置详细说明）](docs/translate.md)
 
 #### [JoyTag -- 反推图片，输出tags。（点击查看详细）](docs/joytag.md)
 

@@ -7,7 +7,7 @@
 如果选择百度翻译，请继续按照以下“修改配置”和“获取百度翻译平台的APPID和秘钥”步骤操作
 
 #### 1 修改配置
-修根目录下config.josn的内容（如果没有config.json，则手动创建一个），路径为：ComfyUI_NYJY/config.json
+将根目录下config.josn.template文件重命名为config.json（或者新建一个文件也可以），修改以下内容：
 ```
 {
     "Baidu": {
