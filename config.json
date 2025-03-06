@@ -1,9 +1,0 @@
-{
-    "Baidu": {
-        "AppId": "APPID",
-        "Secret": "SECRET"
-    },
-    "joytag": {
-        "hf_project": "fancyfeast/joytag"
-    }
-}
