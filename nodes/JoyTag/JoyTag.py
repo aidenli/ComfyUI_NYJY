@@ -131,7 +131,7 @@ class JoyTagNode:
             print_log(f"开始下载模型到：{self.clip_model_path}")
             os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
             snapshot_download(
-                repo_id=self.config_data["joytag"]["hf_project"],
+                repo_id="fancyfeast/joytag",
                 ignore_patterns=["*.onnx"],
                 local_dir=self.clip_model_path,
             )
