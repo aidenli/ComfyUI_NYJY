@@ -211,6 +211,40 @@ app.registerExtension({
 				}
 				return r
 			}
+		} else if (nodeData.name === "JsonGetValueByKeys" || nodeData.name === "JsonDumps") {
+			const onExecuted = nodeType.prototype.onExecuted;
+			nodeType.prototype.onExecuted = function (message) {
+				console.log(message)
+				onExecuted?.apply(this, arguments);
+				if (this.widgets) {
+					const pos = this.widgets.findIndex((w) => w.name === "preview_text");
+					let w;
+					if (pos === -1) {
+						w = ComfyWidgets["STRING"](this, "preview_text", ["STRING", { multiline: true }], app).widget;
+					}
+					w.inputEl.readOnly = true;
+					w.inputEl.style.opacity = 1;
+					w.value = message["text"][0];
+				}
+				this.onResize?.(this.size);
+			}
+		}else if (["JsonGetValueByKeys", "JsonDumps", "JsonLoads"].includes(nodeData.name)) {
+			const onExecuted = nodeType.prototype.onExecuted;
+			nodeType.prototype.onExecuted = function (message) {
+				console.log(message)
+				onExecuted?.apply(this, arguments);
+				if (this.widgets) {
+					const pos = this.widgets.findIndex((w) => w.name === "preview_text");
+					let w;
+					if (pos === -1) {
+						w = ComfyWidgets["STRING"](this, "preview_text", ["STRING", { multiline: true }], app).widget;
+					}
+					w.inputEl.readOnly = true;
+					w.inputEl.style.opacity = 1;
+					w.value = message["text"][0];
+				}
+				this.onResize?.(this.size);
+			}
 		}
 	}
 })

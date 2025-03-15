@@ -12,3 +12,4 @@ pygtrans
 fake_useragent
 lxml
 openai
+volcengine-python-sdk

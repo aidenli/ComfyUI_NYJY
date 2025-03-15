@@ -5,6 +5,12 @@
     },
     "Google": {"proxy": ""}, 
     "DeepSeek": {
-        "Key": ""
+        "api_key": ""
+    },
+    "bailian": {
+        "api_key": ""
+    },
+    "volcengine": {
+        "api_key": ""
     }
 }

@@ -2,8 +2,7 @@ import requests
 import json
 from pathlib import Path
 from fake_useragent import UserAgent
-from ..config import print_log
-from ..utils import create_nonceid, get_system_proxy
+from ..utils import create_nonceid, get_system_proxy, print_log
 
 
 class joy_caption_online:

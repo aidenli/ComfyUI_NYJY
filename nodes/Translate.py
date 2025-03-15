@@ -176,9 +176,9 @@ class TranslateNode:
 
     def trans_by_deepseek(self, from_lang, to_lang, text):
         config_data = LoadConfig()
-        key = config_data["DeepSeek"]["Key"]
+        api_key = config_data["DeepSeek"].get("api_key",  config_data["DeepSeek"].get("Key", ""))
 
-        client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
+        client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
 
         try:
             response = client.chat.completions.create(

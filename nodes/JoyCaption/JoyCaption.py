@@ -7,7 +7,7 @@ from transformers import (
     PreTrainedTokenizerFast,
     AutoModelForCausalLM,
 )
-from ..config import LoadConfig, print_log
+from ..config import LoadConfig
 import os
 from huggingface_hub import snapshot_download
 import torch
@@ -15,7 +15,7 @@ from PIL import Image
 import numpy as np
 from pathlib import Path
 from .online import joy_caption_online, jc2_online, jc1_online
-from ..utils import create_nonceid
+from ..utils import create_nonceid, print_log
 import time
 import folder_paths
 

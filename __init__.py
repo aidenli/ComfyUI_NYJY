@@ -1,3 +1,17 @@
+from .nodes.AIModelBridge.BridgeNode import BailianChatNode, BailianChatOption, BailianVLOption, BailianVLNode, CommonLLMChatNode
+from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, ConvertAnyToString
+from .nodes.logics.json_fn import JsonLoads, JsonDumps, JsonGetValueByKeys
+from .nodes.logics.array_fn import GetItemFromList
+from .nodes.number_tools import FloatSliderNode
+from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNode
+from .nodes.civitai_prompt import CivitaiPromptNode
+from .nodes.JoyCaption.JoyCaption import (
+    JoyCaptionAlpha2OnlineNode,
+    JoyCaptionAlpha1OnlineNode,
+)
+from .nodes.JoyCaption.JoyCaption import JoyCaptionNode
+from .nodes.JoyTag.JoyTag import JoyTagNode
+from .nodes.Translate import TranslateNode
 import importlib.util
 import subprocess
 import os
@@ -27,20 +41,6 @@ def check_and_install_packages():
 # check_and_install_packages()
 
 
-from .nodes.Translate import TranslateNode
-from .nodes.JoyTag.JoyTag import JoyTagNode
-from .nodes.JoyCaption.JoyCaption import JoyCaptionNode
-from .nodes.JoyCaption.JoyCaption import (
-    JoyCaptionAlpha2OnlineNode,
-    JoyCaptionAlpha1OnlineNode,
-)
-from .nodes.civitai_prompt import CivitaiPromptNode
-from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNode
-from .nodes.number_tools import FloatSliderNode
-from .nodes.logics.array_fn import GetItemFromList
-from .nodes.logics.json_fn import JsonLoads, JsonDumps
-from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, ConvertAnyToString
-
 NODE_CLASS_MAPPINGS = {
     "Translate": TranslateNode,
     "JoyTag": JoyTagNode,
@@ -54,28 +54,24 @@ NODE_CLASS_MAPPINGS = {
     "GetItemFromList": GetItemFromList,
     "JsonLoads": JsonLoads,
     "JsonDumps": JsonDumps,
+    "JsonGetValueByKeys": JsonGetValueByKeys,
     "SplitString": SplitString,
     "ConvertStringToNumber": ConvertStringToNumber,
-    "ConvertAnyToString": ConvertAnyToString
+    "ConvertAnyToString": ConvertAnyToString,
+    "BailianChatOption": BailianChatOption,
+    "BailianChat": BailianChatNode,
+    "BailianVLOption": BailianVLOption,
+    "BailianVL": BailianVLNode,
+    "CommonLLMChat": CommonLLMChatNode
 }
 
-NODE_DISPLAY_NAME_MAPPINGS = {
-    "Translate": "Translate (NYJY)",
-    "JoyTag": "JoyTag (NYJY)",
-    "JoyCaption": "JoyCaption (NYJY)",
-    "JoyCaptionAlpha2Online": "JoyCaptionAlpha2Online (NYJY)",
-    "JoyCaptionAlpha1Online": "JoyCaptionAlphaOneOnline (NYJY)",
-    "CivitaiPrompt": "CivitaiPrompt（NYJY）",
-    "CustomLatentImage-NYJY": "CustomLatentImage（NYJY）",
-    "CustomLatentImageSimple": "CustomLatentImageSimple（NYJY）",
-    "FloatSlider-NYJY": "FloatSlider（NYJY）",
-    "GetItemFromList": "GetItemFromList（NYJY）",
-    "JsonLoads": "JsonLoads（NYJY）",
-    "JsonDumps": "JsonDumps（NYJY）",
-    "SplitString": "SplitString（NYJY）",
-    "ConvertStringToNumber": "ConvertStringToNumber（NYJY）",
-    "ConvertAnyToString": "ConvertAnyToString（NYJY）"
-}
+NODE_DISPLAY_NAME_MAPPINGS = {}
+for k in NODE_CLASS_MAPPINGS.keys():
+    if "NYJY" in k:
+        NODE_DISPLAY_NAME_MAPPINGS[k] = k
+    else:
+        NODE_DISPLAY_NAME_MAPPINGS[k] = k + "(NYJY)"
 
 WEB_DIRECTORY = "./web"
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
+__all__ = ["NODE_CLASS_MAPPINGS",
+           "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
