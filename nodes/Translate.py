@@ -220,7 +220,7 @@ class TranslateNode:
             else:
                 translate_str, ui_msg = ("", "未选择翻译平台")
 
-            if translate_str is not "":
+            if translate_str != "":
                 cache_result[mission_key] = translate_str
 
         if clip is None:
