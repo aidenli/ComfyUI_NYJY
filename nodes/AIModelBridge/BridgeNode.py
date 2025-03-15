@@ -124,13 +124,13 @@ class BailianVLNode:
 # """
 
     def chat(self, model, image, prompt, max_tokens, api_key, seed):
-        md5 = hashlib.md5((f"{model}{prompt}{max_tokens}{api_key}{seed}").encode('utf-8')).hexdigest()
-        if md5 in self.cache:
-            return (self.cache[md5],)
-
         try:
             if image is None:
                 raise ValueError("请上传图片")
+
+            md5 = hashlib.md5((f"{model}{image}{prompt}{max_tokens}{api_key}{seed}").encode('utf-8')).hexdigest()
+            if md5 in self.cache:
+                return (self.cache[md5],)
 
             # Convert seed to integer or use None if it's 0
             seed_value = int(seed) if seed != 0 else None
