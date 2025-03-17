@@ -7,8 +7,6 @@ from ..utils import create_nonceid, get_system_proxy, print_log
 
 class joy_caption_online:
     def __init__(self, host="fancyfeast-joy-caption-pre-alpha.hf.space") -> None:
-        # 获取系统代理
-        proxy = get_system_proxy()
         ua = UserAgent(platforms="pc")
         # 定义头部信息
         headers = {
@@ -18,16 +16,7 @@ class joy_caption_online:
         }
 
         self.__session = requests.Session()
-
         self.__session.trust_env = False
-
-        if proxy is not None:
-            proxies = {
-                "http": f"{proxy}",
-                "https": f"{proxy}",
-            }
-            self.__session.proxies = proxies
-
         self.__session.headers = headers
         self.__host = host
         pass
@@ -126,8 +115,6 @@ class joy_caption_online:
 
 class jc2_online:
     def __init__(self, host="fancyfeast-joy-caption-alpha-two.hf.space") -> None:
-        # 获取系统代理
-        proxy = get_system_proxy()
         ua = UserAgent(platforms="pc")
         # 定义头部信息
         headers = {
@@ -137,16 +124,7 @@ class jc2_online:
         }
 
         self.__session = requests.Session()
-
         self.__session.trust_env = False
-
-        if proxy is not None:
-            proxies = {
-                "http": f"{proxy}",
-                "https": f"{proxy}",
-            }
-            self.__session.proxies = proxies
-
         self.__session.headers = headers
         self.__host = host
         pass
@@ -311,8 +289,6 @@ class jc2_online:
 
 class jc1_online:
     def __init__(self, host="fancyfeast-joy-caption-alpha-one.hf.space") -> None:
-        # 获取系统代理
-        proxy = get_system_proxy()
         ua = UserAgent(platforms="pc")
         # 定义头部信息
         headers = {
@@ -322,16 +298,7 @@ class jc1_online:
         }
 
         self.__session = requests.Session()
-
         self.__session.trust_env = False
-
-        if proxy is not None:
-            proxies = {
-                "http": f"{proxy}",
-                "https": f"{proxy}",
-            }
-            self.__session.proxies = proxies
-
         self.__session.headers = headers
         self.__host = host
         pass

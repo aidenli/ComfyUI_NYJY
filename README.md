@@ -8,7 +8,7 @@
 
 
 ## 更新日志
-#### 2025-03-16 接入阿里百炼平台，增加了一些针对json和数组的方法。[查看demo](docs/images/bailian.png)
+#### 2025-03-16 接入阿里百炼平台，增加了一些针对json和数组的方法。[查看demo](docs/images/百炼demo.png)
 
 [全部更新历史](docs/update_log.md)
 

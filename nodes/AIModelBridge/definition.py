@@ -23,7 +23,7 @@ def get_platform_config(platform):
 
         # 获取配置数据
         from ..config import config_data
-        platform_cfg["api_key"] = config_data.get(platform, {}).get("Key", "")
+        platform_cfg["api_key"] = config_data.get(platform, {}).get("api_key", "")
         if platform_cfg["api_key"] == "":
             print_log(f"未在config.json中设置平台 {platform} 的Key")
         return platform_cfg
