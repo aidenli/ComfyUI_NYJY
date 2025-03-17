@@ -8,7 +8,10 @@
 
 
 ## 更新日志
-#### 2025-03-16 接入阿里百炼平台，增加了一些针对json和数组的方法。[查看demo](docs/images/百炼demo.png)
+#### 2025-03-16 接入阿里百炼平台（文本推理、图片理解能力），增加了一些针对json和数组的方法。百炼api-key申请地址：[https://bailian.console.aliyun.com/?apiKey=1#/api-key](https://bailian.console.aliyun.com/?apiKey=1#/api-key) 
+
+[查看百炼节点的demo](docs/images/百炼demo.png)
+
 
 [全部更新历史](docs/update_log.md)
 
