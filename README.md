@@ -1,7 +1,7 @@
 ## 关于有朋友反馈插件更新后配置文件的内容会被覆盖的解决方案
 ### 1. 备份原有的config.json文件
-### 2. 删除config.json
-### 3. git更新ComfyUI_NYJY
+### 2. 在ComfyUI_NYJY目录下执行命令：git checkout .
+### 3. 在ComfyUI_NYJY目录下执行命令：git pull
 ### 4. 把备份好的config.json文件放回项目根目录
 ### （上述操作只需要做一次，完成最近的更新即可，后续就可以正常更新了）
 <br />
