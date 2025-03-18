@@ -2,7 +2,6 @@ import os
 import requests
 import json
 from openai import OpenAI
-from volcenginesdkarkruntime import Ark
 from typing import Dict, Optional, Type
 from .definition import get_platform_config
 from ..utils import print_log
