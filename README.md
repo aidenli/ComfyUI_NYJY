@@ -1,4 +1,4 @@
-## 关于有朋友反馈插件更新后配置文件的内容会被覆盖的解决方案
+## 关于更新本项目出现abort的提示导致更新失败的解决方法：
 ### 1. 备份原有的config.json文件
 ### 2. 在ComfyUI_NYJY目录下执行命令：git checkout .
 ### 3. 在ComfyUI_NYJY目录下执行命令：git pull
