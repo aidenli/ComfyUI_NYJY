@@ -11,7 +11,7 @@
 
 ![获取api](images/bailian_api_key.jpg)
 
-将创建的api key写入到config.json文件中，如果config.json不存在，可以拷贝config.json.template的内容新建一个。
+将创建的api key写入到config.json文件中，如果config.json不存在，可以拷贝config.json.template的内容新建一个。（如果不想修改配置文件，需要在百炼的节点中填入api_key字段）
 
 修改文件中的bailian.api_key：
 ```json
