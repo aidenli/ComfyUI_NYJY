@@ -4,13 +4,16 @@
 ### 3. git更新ComfyUI_NYJY
 ### 4. 把备份好的config.json文件放回项目根目录
 ### （上述操作只需要做一次，完成最近的更新即可，后续就可以正常更新了）
-
-
+<br />
+<br />
 
 ## 更新日志
-#### 2025-03-16 接入阿里百炼平台，增加了一些针对json和数组的方法。[查看demo](docs/images/百炼demo.png)
+#### 2025-03-16 接入阿里百炼平台，增加了一些针对json和数组的方法。[查看接入方式](docs/bailian.md)
+<br />
 
 [全部更新历史](docs/update_log.md)
+<br />
+<br />
 
 ## 节点列表
 #### [Translate -- 翻译节点，对接谷歌翻译和百度翻译，支持多语言。（重要：百度翻译节点配置详细说明）](docs/translate.md)
@@ -20,6 +23,8 @@
 #### [JoyCaption -- 反推图片，输出自然语言。（点击查看详细）](docs/joycaption.md)
 
 #### [CivitaiPrompt -- 随机获取C站图片的提示词。（点击查看详细）](docs/civitaiprompt.md)
+<br />
+<br />
 
 ## 安装方法（两种方式）
 ### 1. 通过ComfyUI Manager安装。
