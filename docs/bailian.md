@@ -6,6 +6,12 @@
 <br />
 <br />
 
+### 注意事项!
+1. 注册阿里云账户的需要实名认证才能正常调用大模型api
+2. 挂梯子有可能会导致阿里百炼的api请求失败。
+<br />
+<br />
+
 ### api key获取方式
 登录：[https://bailian.console.aliyun.com/?apiKey=1](https://bailian.console.aliyun.com/?apiKey=1)。没有账户就注册一个，注册后会获得一些模型的使用额度，具体额度值可以在模型广场中查看。
 
@@ -36,7 +42,4 @@
 <br />
 
 ### 使用demo（图片带流）
-注意：挂梯子有可能会导致阿里百炼的api请求失败。
-<br />
-
 ![demo](images/百炼demo.png)
