@@ -5,7 +5,8 @@ import numpy as np
 import base64
 import io
 import traceback
-import hashlib  # 添加这行
+import hashlib
+import json
 
 
 class ModelOptionBase:
@@ -60,6 +61,7 @@ class BailianChatNode:
                 "max_tokens": ("INT", {"default": 1024, "min": 1, "max": 8192, "step": 1}),
                 "api_key": ("STRING", {"default": ""}),
                 "seed": ("INT", {"default": 1234, "min": 0, "max": 2147483647}),
+                "history": ("STRING", {"multiline": True, "default": ""}),
             }
         }
 
@@ -72,8 +74,8 @@ class BailianChatNode:
 # 阿里百炼大模型列表：https://bailian.console.aliyun.com/#/model-market
 # """
 
-    def chat(self, model, prompt, max_tokens, api_key, seed):
-        md5 = hashlib.md5((f"{model}{prompt}{max_tokens}{api_key}{seed}").encode('utf-8')).hexdigest()
+    def chat(self, model, prompt, max_tokens, api_key, seed, history):
+        md5 = hashlib.md5((f"{model}{prompt}{max_tokens}{api_key}{seed}{history}").encode('utf-8')).hexdigest()
         if md5 in self.cache:
             return (self.cache[md5],)
 
@@ -83,9 +85,14 @@ class BailianChatNode:
             if api_key != "":
                 model_instance.set_config({"api_key": api_key})
 
+            if len(history) > 0:
+                history_messages = json.loads(history)
+            else:
+                history_messages = []
+
             response = model_instance.chat_completion(
                 model=model,
-                messages=[{"role": "user", "content": prompt}],
+                messages=history_messages + [{"role": "user", "content": prompt}],
                 max_tokens=int(max_tokens),
                 seed=int(seed))
             self.cache[md5] = response
@@ -244,6 +251,7 @@ class CommonLLMChatNode:
             },
             "optional": {
                 "max_tokens": ("INT", {"default": 1024, "min": 1, "max": 8192, "step": 1}),
+                "history": ("STRING", {"multiline": True, "default": ""}),
             }
         }
 
@@ -252,8 +260,8 @@ class CommonLLMChatNode:
     FUNCTION = "chat"
     CATEGORY = "NYJY/llm"
 
-    def chat(self, base_url, model, api_key, prompt, max_tokens):
-        md5 = hashlib.md5((model + prompt).encode('utf-8')).hexdigest()
+    def chat(self, base_url, model, api_key, prompt, max_tokens,history):
+        md5 = hashlib.md5((f"{model}{prompt}{max_tokens}{history}").encode('utf-8')).hexdigest()
         if md5 in self.cache:
             return (self.cache[md5],)
 
@@ -263,9 +271,14 @@ class CommonLLMChatNode:
             model_instance.set_config(
                 {"api_key": api_key, "base_url": base_url})
 
+            if len(history) > 0:
+                history_messages = json.loads(history)
+            else:
+                history_messages = []
+
             response = model_instance.chat_completion(
                 model=model,
-                messages=[{"role": "user", "content": prompt}],
+                messages=history_messages + [{"role": "user", "content": prompt}],
                 max_tokens=max_tokens),
             self.cache[md5] = response
             return (response,)

@@ -1,7 +1,9 @@
 import json
+from ..utils import print_log
 from ..classes import AnyType
 
 any_type = AnyType("*")
+
 
 class SplitString:
     @classmethod
@@ -65,3 +67,30 @@ class ConvertAnyToString:
         except Exception as e:
             # 如果转换失败，捕获异常并返回错误信息
             return ("", )
+
+
+class ReadFileToString:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "file_path": ("STRING", {"multiline": False}),
+            },
+        }
+
+    RETURN_TYPES = (
+        "STRING",
+    )
+    FUNCTION = "run"
+    CATEGORY = "NYJY/logic"
+
+    def run(self, file_path):
+        try:
+            # 打开文件并读取内容
+            with open(file_path, 'r', encoding="utf-8") as file:
+                content = file.read()
+            return (content, )
+        except Exception as e:
+            # 如果读取失败，捕获异常并返回错误信息
+            print_log("读取文件失败：" + str(e))
+            return (str(e), )

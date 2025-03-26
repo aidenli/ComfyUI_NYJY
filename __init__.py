@@ -1,5 +1,5 @@
 from .nodes.AIModelBridge.BridgeNode import BailianChatNode, BailianChatOption, BailianVLOption, BailianVLNode, CommonLLMChatNode
-from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, ConvertAnyToString
+from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, ConvertAnyToString, ReadFileToString
 from .nodes.logics.json_fn import JsonLoads, JsonDumps, JsonGetValueByKeys
 from .nodes.logics.array_fn import GetItemFromList
 from .nodes.number_tools import FloatSliderNode
@@ -58,11 +58,13 @@ NODE_CLASS_MAPPINGS = {
     "SplitString": SplitString,
     "ConvertStringToNumber": ConvertStringToNumber,
     "ConvertAnyToString": ConvertAnyToString,
+    "ReadFileToString": ReadFileToString,
     "BailianChatOption": BailianChatOption,
     "BailianChat": BailianChatNode,
     "BailianVLOption": BailianVLOption,
     "BailianVL": BailianVLNode,
-    "CommonLLMChat": CommonLLMChatNode
+    "CommonLLMChat": CommonLLMChatNode,
+
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {}
