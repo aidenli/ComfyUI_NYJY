@@ -12,6 +12,7 @@ from .nodes.JoyCaption.JoyCaption import (
 from .nodes.JoyCaption.JoyCaption import JoyCaptionNode
 from .nodes.JoyTag.JoyTag import JoyTagNode
 from .nodes.Translate import TranslateNode
+from .nodes.fluxpro import FluxProOnlineNode
 import importlib.util
 import subprocess
 import os
@@ -64,7 +65,7 @@ NODE_CLASS_MAPPINGS = {
     "BailianVLOption": BailianVLOption,
     "BailianVL": BailianVLNode,
     "CommonLLMChat": CommonLLMChatNode,
-
+    "FluxProOnline": FluxProOnlineNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {}
