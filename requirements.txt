@@ -12,3 +12,5 @@ pygtrans
 fake_useragent
 lxml
 openai
+gradio>=5.31
+gradio_client>=1.10.1
