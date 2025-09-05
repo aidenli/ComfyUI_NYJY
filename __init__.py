@@ -3,7 +3,7 @@ from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, Convert
 from .nodes.logics.json_fn import JsonLoads, JsonDumps, JsonGetValueByKeys
 from .nodes.logics.array_fn import GetItemFromList
 from .nodes.number_tools import FloatSliderNode
-from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNode
+from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNode, QwenLatentImageNode
 from .nodes.civitai_prompt import CivitaiPromptNode
 from .nodes.JoyCaption.JoyCaption import (
     JoyCaptionAlpha2OnlineNode,
@@ -66,6 +66,7 @@ NODE_CLASS_MAPPINGS = {
     "BailianVL": BailianVLNode,
     "CommonLLMChat": CommonLLMChatNode,
     "FluxProOnline": FluxProOnlineNode,
+    "QwenLatentImage": QwenLatentImageNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {}

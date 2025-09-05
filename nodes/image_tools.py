@@ -20,6 +20,29 @@ radio_list = [
     "SD1.5 - 2:1 cinema 1024x512",
 ]
 
+qwen_image_list = [
+    "1:1 - 1328x1328",
+    "3:4 - 1104x1472",
+    "2:3 - 1056x1584",
+    "9:16 - 936x1664",
+    "9:21 - 864x2016",
+    "4:3 - 1472x1104",
+    "3:2 - 1584x1056",
+    "16:9 - 1664x936",
+    "21:9 - 2016x864",
+]
+
+qwen_image_list_map = {
+    "1:1 - 1328x1328": (1328, 1328),
+    "3:4 - 1104x1472": (1104, 1472),
+    "2:3 - 1056x1584": (1056, 1584),
+    "9:16 - 936x1664": (936, 1664),
+    "9:21 - 864x2016": (864, 2016),
+    "4:3 - 1472x1104": (1472, 1104),
+    "3:2 - 1584x1056": (1584, 1056),
+    "16:9 - 1664x936": (1664, 936),
+    "21:9 - 2016x864": (2016, 864),
+}
 
 class CustomLatentImageNode:
     @classmethod
@@ -129,6 +152,35 @@ class CustomLatentImageSimpleNode:
         if switch_width_height:
             (width, height) = (height, width)
 
+        latent = torch.zeros(
+            [batch_size, 4, height // 8, width // 8],
+            device=comfy.model_management.intermediate_device(),
+        )
+        return {"result": ({"samples": latent},)}
+
+class QwenLatentImageNode:
+    @classmethod
+    def INPUT_TYPES(self):
+        return {
+            "required": {
+                "radio": (
+                    qwen_image_list,
+                    {"default": "1:1 - 1328x1328"},
+                ),
+                "batch_size": (
+                    "INT",
+                    {"default": 1, "min": 1, "max": 100},
+                ),
+            }
+        }
+
+    RETURN_TYPES = ("LATENT",)
+    RETURN_NAMES = ("LATENT",)
+    FUNCTION = "run"
+    CATEGORY = "NYJY"
+
+    def run(self, radio, batch_size):
+        width, height = qwen_image_list_map[radio]
         latent = torch.zeros(
             [batch_size, 4, height // 8, width // 8],
             device=comfy.model_management.intermediate_device(),
