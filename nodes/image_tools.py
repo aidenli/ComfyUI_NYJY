@@ -171,18 +171,30 @@ class QwenLatentImageNode:
                     "INT",
                     {"default": 1, "min": 1, "max": 100},
                 ),
+                "width_override": (
+                    "INT",
+                    {"default": 0},
+                ),
+                "height_override": (
+                    "INT",
+                    {"default": 0},
+                ),
             }
         }
 
-    RETURN_TYPES = ("LATENT",)
-    RETURN_NAMES = ("LATENT",)
+    RETURN_TYPES = ("LATENT", "INT", "INT")
+    RETURN_NAMES = ("LATENT", "width", "height")
     FUNCTION = "run"
     CATEGORY = "NYJY"
 
-    def run(self, radio, batch_size):
+    def run(self, radio, batch_size, width_override, height_override):
         width, height = qwen_image_list_map[radio]
+        if width_override > 0 and height_override > 0:
+            width = width_override
+            height = height_override
+            
         latent = torch.zeros(
             [batch_size, 4, height // 8, width // 8],
             device=comfy.model_management.intermediate_device(),
         )
-        return {"result": ({"samples": latent},)}
+        return {"result": ({"samples": latent}, width, height)}
