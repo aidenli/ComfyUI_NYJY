@@ -4,7 +4,7 @@ import torch
 import comfy.model_management
 import re
 
-radio_list = [
+ratio_list = [
     "SDXL - 1:1 square 1024x1024",
     "SDXL - 2:3 portrait 832x1216",
     "SDXL - 3:4 portrait 896x1152",
@@ -49,8 +49,8 @@ class CustomLatentImageNode:
     def INPUT_TYPES(self):
         return {
             "required": {
-                "radio": (
-                    ["自定义"] + radio_list,
+                "ratio": (
+                    ["自定义"] + ratio_list,
                     {"default": "SDXL - 2:3 portrait 832x1216"},
                 ),
                 "switch_width_height": (
@@ -100,7 +100,7 @@ class CustomLatentImageNode:
     CATEGORY = "NYJY"
 
     def run(
-        self, radio, switch_width_height, width, height, upscale_factor, batch_size
+        self, ratio, switch_width_height, width, height, upscale_factor, batch_size
     ):
         upscale_width = math.ceil(width * upscale_factor)
         upscale_height = math.ceil(height * upscale_factor)
@@ -125,8 +125,8 @@ class CustomLatentImageSimpleNode:
     def INPUT_TYPES(self):
         return {
             "required": {
-                "radio": (
-                    radio_list,
+                "ratio": (
+                    ratio_list,
                     {"default": "SDXL - 2:3 portrait 832x1216"},
                 ),
                 "switch_width_height": (
@@ -145,8 +145,8 @@ class CustomLatentImageSimpleNode:
     FUNCTION = "run"
     CATEGORY = "NYJY"
 
-    def run(self, radio, switch_width_height, batch_size):
-        extracted = re.findall(r"(\d+)x(\d+)$", radio)
+    def run(self, ratio, switch_width_height, batch_size):
+        extracted = re.findall(r"(\d+)x(\d+)$", ratio)
         width = int(extracted[0][0])
         height = int(extracted[0][1])
         if switch_width_height:
@@ -163,7 +163,7 @@ class QwenLatentImageNode:
     def INPUT_TYPES(self):
         return {
             "required": {
-                "radio": (
+                "ratio": (
                     qwen_image_list,
                     {"default": "1:1 - 1328x1328"},
                 ),
@@ -187,8 +187,8 @@ class QwenLatentImageNode:
     FUNCTION = "run"
     CATEGORY = "NYJY"
 
-    def run(self, radio, batch_size, width_override, height_override):
-        width, height = qwen_image_list_map[radio]
+    def run(self, ratio, batch_size, width_override, height_override):
+        width, height = qwen_image_list_map[ratio]
         if width_override > 0 and height_override > 0:
             width = width_override
             height = height_override

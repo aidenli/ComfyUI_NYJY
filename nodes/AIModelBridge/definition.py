@@ -60,3 +60,27 @@ bailian_i2v_models = [
     "wanx2.1-i2v-turbo",
     "wanx2.1-i2v-plus"
 ]
+
+volcengine_chat_models = [
+    "doubao-seed-1-6-vision-250815",
+    "doubao-seed-1-6-flash-250828"
+    "doubao-seed-1-6-thinking-250715"
+]
+
+volcengine_image_models = [
+    "doubao-seedream-4-0-250828"
+]
+
+seedream_image_ratio = [
+    "1:1 2048x2048",
+    "2:3 1664x2496",
+    "3:4 1728x2304",
+    "9:16 1440x2560",
+    "3:2 2496x1664",
+    "4:3 2304x1728",
+    "16:9 2560x1440",
+    "21:9 3024x1296",
+    "1K",
+    "2K",
+    "4K"
+]

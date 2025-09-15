@@ -1,4 +1,4 @@
-from .api import AIModelBridgeFactory
+from .api import AIModelBridgeFactory, ModelOptionBase
 from .definition import *
 from PIL import Image
 import numpy as np
@@ -7,31 +7,6 @@ import io
 import traceback
 import hashlib
 import json
-
-
-class ModelOptionBase:
-    def __init__(self):
-        pass
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        required = {}
-        for modelname in cls.MODEL_LIST:
-            required[modelname] = ("BOOLEAN", {"default": False},)
-        return {
-            "required": required,
-        }
-
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("model",)
-    FUNCTION = "run"
-    CATEGORY = "NYJY/llm"
-
-    def run(self, **kwargs):
-        for k, v in kwargs.items():
-            if v:
-                return (k,)
-        return ("",)
 
 
 class BailianChatOption(ModelOptionBase):
@@ -69,10 +44,10 @@ class BailianChatNode:
     RETURN_NAMES = ("Answer",)
     FUNCTION = "chat"
     CATEGORY = "NYJY/llm"
-#     DESCRIPTION = """
-# 获取阿里百炼API地址：https://bailian.console.aliyun.com/?apiKey=1
-# 阿里百炼大模型列表：https://bailian.console.aliyun.com/#/model-market
-# """
+    #     DESCRIPTION = """
+    # 获取阿里百炼API地址：https://bailian.console.aliyun.com/?apiKey=1
+    # 阿里百炼大模型列表：https://bailian.console.aliyun.com/#/model-market
+    # """
 
     def chat(self, model, prompt, max_tokens, api_key, seed, history):
         md5 = hashlib.md5((f"{model}{prompt}{max_tokens}{api_key}{seed}{history}").encode('utf-8')).hexdigest()
@@ -125,10 +100,10 @@ class BailianVLNode:
     RETURN_NAMES = ("answer",)
     FUNCTION = "chat"
     CATEGORY = "NYJY/llm"
-#     DESCRIPTION = """
-# 获取阿里百炼API地址：https://bailian.console.aliyun.com/?apiKey=1
-# 阿里百炼大模型列表：https://bailian.console.aliyun.com/#/model-market
-# """
+    #     DESCRIPTION = """
+    # 获取阿里百炼API地址：https://bailian.console.aliyun.com/?apiKey=1
+    # 阿里百炼大模型列表：https://bailian.console.aliyun.com/#/model-market
+    # """
 
     def chat(self, model, image, prompt, max_tokens, api_key, seed):
         try:

@@ -1,4 +1,5 @@
-from .nodes.AIModelBridge.BridgeNode import BailianChatNode, BailianChatOption, BailianVLOption, BailianVLNode, CommonLLMChatNode
+from .nodes.AIModelBridge.bailian import BailianChatNode, BailianChatOption, BailianVLOption, BailianVLNode, CommonLLMChatNode
+from .nodes.AIModelBridge.volcengine import VolcengineChatNode, VolcengineChatOption, VolcengineImageOption, VolcengineImg2ImgNode, VolcengineTxt2ImgNode
 from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, ConvertAnyToString, ReadFileToString
 from .nodes.logics.json_fn import JsonLoads, JsonDumps, JsonGetValueByKeys
 from .nodes.logics.array_fn import GetItemFromList
@@ -67,6 +68,11 @@ NODE_CLASS_MAPPINGS = {
     "CommonLLMChat": CommonLLMChatNode,
     "FluxProOnline": FluxProOnlineNode,
     "QwenLatentImage": QwenLatentImageNode,
+    "VolcengineChat": VolcengineChatNode,
+    "VolcengineChatOption": VolcengineChatOption,
+    "VolcengineImageOption": VolcengineImageOption,
+    "VolcengineImg2Img": VolcengineImg2ImgNode,
+    "VolcengineTxt2Img": VolcengineTxt2ImgNode
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {}

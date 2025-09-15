@@ -6,6 +6,30 @@ from typing import Dict, Optional, Type
 from .definition import get_platform_config
 from ..utils import print_log
 
+class ModelOptionBase:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        required = {}
+        for modelname in cls.MODEL_LIST:
+            required[modelname] = ("BOOLEAN", {"default": False},)
+        return {
+            "required": required,
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("model",)
+    FUNCTION = "run"
+    CATEGORY = "NYJY/llm"
+
+    def run(self, **kwargs):
+        for k, v in kwargs.items():
+            if v:
+                return (k,)
+        return ("",)
+
 class AIModelBridgeFactory:
     _instance: Optional['AIModelBridgeFactory'] = None
     _models: Dict[str, 'AIModelBridge'] = {}
@@ -103,6 +127,9 @@ class AIModelBridge:
     def i2v(self, model: str, input: dict, parameters: dict) -> dict:
         raise NotImplementedError("生成视频功能需要子类实现")
 
+    def i2i(self, model: str, parameters: dict) -> dict:
+        raise NotImplementedError("生成图片功能需要子类实现")
+
 # 阿里百炼网关
 class BaiLianBridge(AIModelBridge):
     def i2v(self, model: str, input: dict, parameters: dict) -> dict:
@@ -151,16 +178,39 @@ class BaiLianBridge(AIModelBridge):
 
 # 火山引擎网关
 class VolcEngineBridge(AIModelBridge):
-    def i2v(self, model: str, input: dict, parameters: dict) -> dict:
-        return {}
+    def i2i(self, model: str, parameters: dict) -> dict:
+        # 通过 pip install 'volcengine-python-sdk[ark]' 安装方舟SDK 
+        from volcenginesdkarkruntime import Ark 
+        from volcenginesdkarkruntime.types.images.images import SequentialImageGenerationOptions
+        # 请确保您已将 API Key 存储在环境变量 ARK_API_KEY 中 
+        # 初始化Ark客户端，从环境变量中读取您的API Key 
+        client = Ark( 
+            # 此为默认路径，您可根据业务所在地域进行配置 
+            base_url=self.base_url, 
+            # 从环境变量中获取您的 API Key。此为默认方式，您可根据需要进行修改 
+            api_key=self.api_key, 
+        )
+
+        max_images = parameters.get("max_images", 1)
+        
+        imagesResponse = client.images.generate( 
+            model=model, 
+            prompt=parameters.get("prompt", ""),
+            image=parameters.get("image", []),
+            size=parameters.get("size", "2K"),
+            sequential_image_generation="auto" if max_images > 1 else "disabled",
+            sequential_image_generation_options=SequentialImageGenerationOptions(max_images=max_images),
+            response_format="b64_json",
+            watermark=parameters.get("watermark", False),
+            seed=parameters.get("seed", 0),
+        )
+    
+        return imagesResponse.data
 
 class CommonBridge(AIModelBridge):
     def i2v(self, model: str, input: dict, parameters: dict) -> dict:
         return {}
-# 使用示例
-# factory = AIModelBridgeFactory()
-# bailian_model = factory.get_model("bailian")
-# response = await bailian_model.chat_completion(messages=[...])
+
 
 # 注册模型
 AIModelBridgeFactory.register_model("bailian", BaiLianBridge)
