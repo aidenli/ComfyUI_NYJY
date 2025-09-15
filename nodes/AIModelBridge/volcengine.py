@@ -7,6 +7,7 @@ import io
 import json
 import torch
 import hashlib
+import traceback
 
 class VolcengineChatOption(ModelOptionBase):
     MODEL_LIST = volcengine_chat_models
