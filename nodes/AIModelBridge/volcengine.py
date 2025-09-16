@@ -189,7 +189,7 @@ class VolcengineTxt2ImgNode:
             if api_key != "":
                 model_instance.set_config({"api_key": api_key})
             
-            if override_with > 0 and override_height >=0:
+            if override_with > 0 and override_height > 0:
                 ratio_or_size = f"{override_with}x{override_height}"
             elif "x" in ratio_or_size:
                 ratio_or_size = ratio_or_size.split(" ")[1]
@@ -258,7 +258,7 @@ class VolcengineImg2ImgNode:
             # 使用ImageConverter批量转换comfyui的image类型到base64
             images_base64 = ImageConverter.batch_comfyui_images_to_base64(images)
             
-            if override_with > 0 and override_height >=0:
+            if override_with > 0 and override_height > 0:
                 ratio_or_size = f"{override_with}x{override_height}"
             elif "x" in ratio_or_size:
                 ratio_or_size = ratio_or_size.split(" ")[1]
@@ -326,7 +326,7 @@ class Seedream3Txt2ImgNode:
             if api_key != "":
                 model_instance.set_config({"api_key": api_key})
             
-            if override_with > 0 and override_height >=0:
+            if override_with > 0 and override_height > 0:
                 size = f"{override_with}x{override_height}"
             elif "x" in ratio:
                 size = ratio.split(" ")[1]
