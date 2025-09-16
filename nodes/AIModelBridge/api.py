@@ -191,21 +191,44 @@ class VolcEngineBridge(AIModelBridge):
             api_key=self.api_key, 
         )
 
-        max_images = parameters.get("max_images", 1)
-        
-        imagesResponse = client.images.generate( 
-            model=model, 
-            prompt=parameters.get("prompt", ""),
-            image=parameters.get("image", []),
-            size=parameters.get("size", "2K"),
-            sequential_image_generation="auto" if max_images > 1 else "disabled",
-            sequential_image_generation_options=SequentialImageGenerationOptions(max_images=max_images),
-            response_format="b64_json",
-            watermark=parameters.get("watermark", False),
-            seed=parameters.get("seed", 0),
-        )
-    
-        return imagesResponse.data
+        if "doubao-seedream-4" in model:
+            max_images = parameters.get("max_images", 1)
+            
+            imagesResponse = client.images.generate( 
+                model=model, 
+                prompt=parameters.get("prompt", ""),
+                image=parameters.get("image", []),
+                size=parameters.get("size", "2K"),
+                sequential_image_generation="auto" if max_images > 1 else "disabled",
+                sequential_image_generation_options=SequentialImageGenerationOptions(max_images=max_images),
+                response_format="b64_json",
+                watermark=parameters.get("watermark", False),
+                seed=parameters.get("seed", 0),
+            )
+            return imagesResponse.data
+        elif "doubao-seedream-3-0" in model:            
+            imagesResponse = client.images.generate( 
+                model=model, 
+                prompt=parameters.get("prompt", ""),
+                size=parameters.get("size", "1024x1024"),
+                response_format="b64_json",
+                watermark=parameters.get("watermark", False),
+                seed=parameters.get("seed", 0),
+                guidance_scale=parameters.get("guidance_scale", 2.5),
+            )
+            return imagesResponse.data
+        elif "doubao-seededit-3-0" in model:
+            imagesResponse = client.images.generate( 
+                model=model, 
+                prompt=parameters.get("prompt", ""),
+                image=parameters.get("image", []),
+                size="adaptive",
+                response_format="b64_json",
+                watermark=parameters.get("watermark", False),
+                seed=parameters.get("seed", 0),
+                guidance_scale=parameters.get("guidance_scale", 5.5),
+            )
+            return imagesResponse.data
 
 class CommonBridge(AIModelBridge):
     def i2v(self, model: str, input: dict, parameters: dict) -> dict:

@@ -71,7 +71,7 @@ volcengine_image_models = [
     "doubao-seedream-4-0-250828"
 ]
 
-seedream_image_ratio = [
+seedream4_image_ratio = [
     "1:1 2048x2048",
     "2:3 1664x2496",
     "3:4 1728x2304",
@@ -83,4 +83,15 @@ seedream_image_ratio = [
     "1K",
     "2K",
     "4K"
+]
+
+seedream3_image_ratio = [
+    "1:1 1024x1024",
+    "2:3 832x1248",
+    "3:4 864x1152",
+    "9:16 720x1280",
+    "3:2 1248x832",
+    "4:3 1152x864",
+    "16:9 1280x720",
+    "21:9 1512x648"
 ]
