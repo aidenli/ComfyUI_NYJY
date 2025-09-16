@@ -367,7 +367,7 @@ class Seededit3Node:
         return {
             "required": {
                 "model": ("STRING", {"default": "doubao-seededit-3-0-i2i-250628"}),
-                "images": ("IMAGE",),
+                "image": ("IMAGE",),
                 "prompt": ("STRING", {"multiline": True, "default": ""}),
             },
             "optional": {
