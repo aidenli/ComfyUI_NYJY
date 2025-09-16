@@ -302,7 +302,7 @@ class Seedream3Txt2ImgNode:
             "required": {
                 "model": ("STRING", {"default": "doubao-seedream-3-0-t2i-250415"}),
                 "prompt": ("STRING", {"multiline": True, "default": ""}),
-                "ratio": (seedream3_image_ratio, {"default": "1:1 1024x1024"}),
+                "ratio": (seedream3_image_ratio, {"default": "1:1 1328x1328"}),
                 "override_with": ("INT", {"default": 0}),
                 "override_height":("INT", {"default": 0}),
             },
