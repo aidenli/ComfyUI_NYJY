@@ -383,7 +383,7 @@ class Seededit3Node:
     FUNCTION = "generate"
     CATEGORY = "NYJY/Volcengine"
 
-    def generate(self, model, images, prompt, guidance_scale, seed, api_key, watermark):
+    def generate(self, model, image, prompt, guidance_scale, seed, api_key, watermark):
         try:
             factory = AIModelBridgeFactory()
             model_instance = factory.get_model(self.platform)
@@ -392,10 +392,8 @@ class Seededit3Node:
 
             # 使用ImageConverter转换comfyui的image类型到base64（只支持单张图片）
             images_base64 = []
-            for image in images:
-                base64_string = ImageConverter.comfyui_image_to_base64(image)
-                images_base64.append(base64_string)
-                break   # 只支持单张图片
+            base64_string = ImageConverter.comfyui_image_to_base64(image[0])
+            images_base64.append(base64_string)
             
             input = {
                 "prompt": prompt,
