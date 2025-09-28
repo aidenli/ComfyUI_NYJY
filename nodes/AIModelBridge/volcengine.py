@@ -174,6 +174,7 @@ class VolcengineTxt2ImgNode:
             "optional": {
                 "api_key": ("STRING", {"default": ""}),
                 "watermark": ("BOOLEAN", {"default": False}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2147483647}),
             }
         }
 
@@ -182,7 +183,7 @@ class VolcengineTxt2ImgNode:
     FUNCTION = "generate"
     CATEGORY = "NYJY/Volcengine"
 
-    def generate(self, model, prompt, ratio_or_size, override_with, override_height, max_images, api_key, watermark):
+    def generate(self, model, prompt, ratio_or_size, override_with, override_height, max_images, api_key, watermark, seed):
         try:
             factory = AIModelBridgeFactory()
             model_instance = factory.get_model(self.platform)
@@ -240,6 +241,7 @@ class VolcengineImg2ImgNode:
             "optional": {
                 "api_key": ("STRING", {"default": ""}),
                 "watermark": ("BOOLEAN", {"default": False}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2147483647}),
             }
         }
 
@@ -248,7 +250,7 @@ class VolcengineImg2ImgNode:
     FUNCTION = "generate"
     CATEGORY = "NYJY/Volcengine"
 
-    def generate(self, model, images, prompt, ratio_or_size, override_with, override_height, max_images, api_key, watermark):
+    def generate(self, model, images, prompt, ratio_or_size, override_with, override_height, max_images, api_key, watermark, seed):
         try:
             factory = AIModelBridgeFactory()
             model_instance = factory.get_model(self.platform)
