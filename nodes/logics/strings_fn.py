@@ -1,6 +1,7 @@
 import json
 from ..utils import print_log
 from ..classes import AnyType
+import re
 
 any_type = AnyType("*")
 
@@ -10,19 +11,26 @@ class SplitString:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "input": ("STRING",),
+                "input": ("STRING", {"multiline": True}),
                 "separator": ("STRING", {"default": ""}),
+                "regex": ("BOOLEAN", {"default": False}),
             },
         }
 
-    RETURN_TYPES = ("listString",)
+    RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("result",)
     FUNCTION = "run"
     CATEGORY = "NYJY/logic"
     OUTPUT_IS_LIST = (True, )
 
-    def run(self, input, separator):
-        return (input.split(separator),)
+    def run(self, input, separator, regex):
+        if regex:
+            arr = re.split(separator, input)
+        else:
+            arr = input.split(separator)
+        # 删除空行
+        arr = [x for x in arr if x.strip() != ""]
+        return (arr,)
 
 
 class ConvertStringToNumber:

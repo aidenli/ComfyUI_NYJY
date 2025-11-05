@@ -14,15 +14,17 @@ class GetItemFromList:
             },
         }
 
-    RETURN_TYPES = ("any_type",)
+    INPUT_IS_LIST = True
+    RETURN_TYPES = (any_type,)
     RETURN_NAMES = ("item",)
     FUNCTION = "run"
     CATEGORY = "NYJY/logic"
+    OUTPUT_NODE = True
 
     def run(self, array, index):
         if is_array(array):
-            if index >= len(array):
-                return ("",)
-            return (array[index],)
+            if index[0] >= len(array):
+                return {"ui": {"text": ("",)}, "result": ("",), }
+            return {"ui": {"text": (array[index[0]],)}, "result": (array[index[0]],), }
         else:
-            return (array,)
+            return {"ui": {"text": (array,)}, "result": (array,), }
