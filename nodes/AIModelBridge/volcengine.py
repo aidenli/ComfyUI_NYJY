@@ -4,9 +4,7 @@ from PIL import Image
 import numpy as np
 import base64
 import io
-import json
 import torch
-import hashlib
 import traceback
 
 
@@ -123,9 +121,11 @@ class VolcengineChatNode:
                 "prompt": ("STRING", {"multiline": True, "default": ""}),
             },
             "optional": {
+                "images": ("IMAGE", {"default": None}),
+                "thinking": (["disabled", "enabled", "auto"], {"default": "disabled"}),
                 "api_key": ("STRING", {"default": ""}),
                 "max_tokens": ("INT", {"default": 4096, "min": 1, "max": 8192, "step": 1}),
-                "history": ("STRING", {"multiline": True, "default": ""}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2147483647, "step": 1}),
             }
         }
 
@@ -134,22 +134,25 @@ class VolcengineChatNode:
     FUNCTION = "chat"
     CATEGORY = "NYJY/Volcengine"
 
-    def chat(self, model, prompt, api_key, max_tokens, history):
+    def chat(self, model, prompt, api_key, images=[], thinking="disabled", max_tokens=4096, seed=0):
         try:
             factory = AIModelBridgeFactory()
             model_instance = factory.get_model(self.platform)
             if api_key != "":
                 model_instance.set_config({"api_key": api_key})
 
-            if len(history) > 0:
-                history_messages = json.loads(history)
-            else:
-                history_messages = []
+            format_prompt = {"role": "user", "content": []}
+            if images is not None and len(images) > 0:
+                for image in images:
+                    format_prompt["content"].append({"image_url": {"url": ImageConverter.comfyui_image_to_base64(image)},"type": "image_url"})
+            format_prompt["content"].append({"text": prompt, "type": "text"})
 
             response = model_instance.chat_completion(
                 model=model,
-                messages=history_messages + [{"role": "user", "content": prompt}],
-                max_tokens=int(max_tokens))
+                messages=[format_prompt],
+                max_tokens=int(max_tokens),
+                thinking={"type":thinking},
+            )
         
             return (response,)
         except Exception as e:

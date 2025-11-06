@@ -24,12 +24,16 @@ class SplitString:
     OUTPUT_IS_LIST = (True, )
 
     def run(self, input, separator, regex):
+        if separator == "":
+            return ((input,),)
+
         if regex:
             arr = re.split(separator, input)
         else:
             arr = input.split(separator)
         # 删除空行
         arr = [x for x in arr if x.strip() != ""]
+        arr = [x.strip() for x in arr]
         return (arr,)
 
 

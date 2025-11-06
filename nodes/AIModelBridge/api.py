@@ -1,10 +1,11 @@
-import os
 import requests
 import json
 from openai import OpenAI
 from typing import Dict, Optional, Type
 from .definition import get_platform_config
 from ..utils import print_log
+from volcenginesdkarkruntime import Ark 
+from volcenginesdkarkruntime.types.images.images import SequentialImageGenerationOptions
 
 class ModelOptionBase:
     def __init__(self):
@@ -178,10 +179,49 @@ class BaiLianBridge(AIModelBridge):
 
 # 火山引擎网关
 class VolcEngineBridge(AIModelBridge):
+    def chat_completion(self, model: str, messages: list, **kwargs) -> dict:
+        try:
+            client = Ark( 
+                # 此为默认路径，您可根据业务所在地域进行配置 
+                base_url=self.base_url, 
+                # 从环境变量中获取您的 API Key。此为默认方式，您可根据需要进行修改 
+                api_key=self.api_key, 
+            )
+
+            resp = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    stream=True,
+                    **kwargs  # 将外部调用时传入的所有额外参数原样透传给 Ark SDK
+                )
+
+            reasoning_content = ""  # 定义完整思考过程
+            answer_content = ""     # 定义完整回复
+            is_answering = False   # 判断是否结束思考过程并开始回复
+            for chunk in resp:
+                if not chunk.choices:
+                    print_log("\nUsage:")
+                    continue  # 添加 continue，避免不必要的 else 块
+                
+                delta = chunk.choices[0].delta
+                if hasattr(delta, 'reasoning_content') and delta.reasoning_content is not None:
+                    print(delta.reasoning_content, end='', flush=True)
+                    reasoning_content += delta.reasoning_content
+                else:
+                    if delta.content and not is_answering:  # 简化条件判断
+                        is_answering = True
+                    if delta.content:  # 简化条件判断
+                        print(delta.content, end='', flush=True)
+                        answer_content += delta.content
+
+            # 蒸馏版deepseek的回答内容放到了reasoning_content中，需要特殊处理
+            return answer_content if answer_content != "" else reasoning_content
+            
+        except Exception as e:
+            # 错误处理
+            raise Exception(f"聊天补全请求失败: {str(e)}")
+
     def i2i(self, model: str, parameters: dict) -> dict:
-        # 通过 pip install 'volcengine-python-sdk[ark]' 安装方舟SDK 
-        from volcenginesdkarkruntime import Ark 
-        from volcenginesdkarkruntime.types.images.images import SequentialImageGenerationOptions
         # 请确保您已将 API Key 存储在环境变量 ARK_API_KEY 中 
         # 初始化Ark客户端，从环境变量中读取您的API Key 
         client = Ark( 
