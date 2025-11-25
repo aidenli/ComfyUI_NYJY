@@ -3,6 +3,7 @@ from nodes import EmptyLatentImage
 import torch
 import comfy.model_management
 import re
+from nodes import MAX_RESOLUTION
 
 ratio_list = [
     "SDXL - 1:1 square 1024x1024",
@@ -59,11 +60,11 @@ class CustomLatentImageNode:
                 ),
                 "width": (
                     "INT",
-                    {"default": 832},
+                    {"default": 832, "step": 8, "min": 0, "max": MAX_RESOLUTION},
                 ),
                 "height": (
                     "INT",
-                    {"default": 1216},
+                    {"default": 1216, "step": 8, "min": 0, "max": MAX_RESOLUTION},
                 ),
                 "upscale_factor": (
                     "FLOAT",
@@ -177,11 +178,11 @@ class QwenLatentImageNode:
                 ),
                 "width_override": (
                     "INT",
-                    {"default": 0},
+                    {"default": 0, "step": 8, "min": 0, "max": MAX_RESOLUTION},
                 ),
                 "height_override": (
                     "INT",
-                    {"default": 0},
+                    {"default": 0, "step": 8, "min": 0, "max": MAX_RESOLUTION},
                 ),
             }
         }
