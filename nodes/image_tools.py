@@ -192,24 +192,11 @@ class QwenLatentImageNode:
     CATEGORY = "NYJY"
 
     def run(self, ratio, batch_size, width_override, height_override):
-        # 用正则表达式提取ratio中的宽高比例值
-        match = re.match(r"(\d+):(\d+)", ratio)
-        if match:
-            width_ratio = int(match.group(1))
-            height_ratio = int(match.group(2))
-        else:
-            raise ValueError(f"Invalid ratio format: {ratio}")  
-
         width, height = qwen_image_list_map[ratio]
-        if width_override > 0 and height_override > 0:
+        if width_override > 0:
             width = width_override
+        if height_override > 0:
             height = height_override
-        elif width_override > 0:
-            width = width_override
-            height = round_to_eight(width * height_ratio // width_ratio)
-        elif height_override > 0:
-            height = height_override
-            width = round_to_eight(height * width_ratio // height_ratio)
             
         latent = torch.zeros(
             [batch_size, 4, height // 8, width // 8],
