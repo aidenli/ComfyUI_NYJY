@@ -1,19 +1,13 @@
 import { app } from "../../../scripts/app.js";
 import { ComfyWidgets } from "../../../scripts/widgets.js"
 
-const link = document.createElement("link")
-link.href = "/extensions/ComfyUI_NYJY/css/nyjy.css"
-link.rel = 'stylesheet'
-link.type = "text/css"
-document.head.appendChild(link)
-
 app.registerExtension({
 	name: "NYJY.jsnodes",
-	async beforeRegisterNodeDef(nodeType, nodeData, app) {
-		if (nodeData.python_module !== "custom_nodes.ComfyUI_NYJY") {
-			return
+		async beforeRegisterNodeDef(nodeType, nodeData, app) {
+		
+		if(!nodeData?.category?.startsWith("NYJY")) {
+			return;
 		}
-
 		if (nodeData.name === "Translate") {
 			const onExecuted = nodeType.prototype.onExecuted;
 			nodeType.prototype.onExecuted = function (message) {
@@ -22,147 +16,19 @@ app.registerExtension({
 				if (this.widgets) {
 					const pos = this.widgets.findIndex((w) => w.name === "preview_text");
 					let w;
-					if (pos !== -1) {
-						if (message["text"][0] !== "") {
-							w = this.widgets[pos]
-							w.value = message["text"][0];
-						} else {
-							for (let i = pos; i < this.widgets.length; i++) {
-								this.widgets[i].onRemove?.();
-							}
-							this.widgets.length = pos;
-						}
+					if (pos === -1) {
+						w = this.widgets[pos]
 					} else {
-						if (message["text"][0] !== "") {
-							w = ComfyWidgets["STRING"](this, "preview_text", ["STRING", { multiline: true }], app).widget;
-							w.inputEl.readOnly = true;
-							w.inputEl.style.opacity = 1;
-							w.value = message["text"][0];
-						}
+						w = ComfyWidgets["STRING"](this, "preview_text", ["STRING", { multiline: true }], app).widget;
+						w.inputEl.readOnly = true;
+						w.inputEl.style.opacity = 1;
 					}
+					w.value = message["text"][0];
 				}
 
 				this.onResize?.(this.size);
 			}
-		} else if (nodeData.name === "CustomLatentImage-NYJY") {
-			const onNodeCreated = nodeType.prototype.onNodeCreated;
-			const radio_list = {
-				"自定义": [0, 0],
-				"SDXL - 1:1 square 1024x1024": [
-					1024,
-					1024,
-				],
-				"SDXL - 2:3 portrait 832x1216": [
-					832,
-					1216,
-				],
-				"SDXL - 3:4 portrait 896x1152": [
-					896,
-					1152,
-				],
-				"SDXL - 5:8 portrait 768x1216": [
-					768,
-					1216,
-				],
-				"SDXL - 9:16 portrait 768x1344": [
-					768,
-					1344,
-				],
-				"SDXL - 9:19 portrait 704x1472": [
-					704,
-					1472,
-				],
-				"SDXL - 9:21 portrait 640x1536": [
-					640,
-					1536,
-				],
-				"SD1.5 - 1:1 square 512x521": [
-					512,
-					512,
-				],
-				"SD1.5 - 2:3 portrait 512x768": [
-					512,
-					768,
-				],
-				"SD1.5 - 3:4 portrait 512x682": [
-					512,
-					682,
-				],
-				"SD1.5 - 16:9 cinema 910x512": [
-					910,
-					512,
-				],
-				"SD1.5 - 1.85:1 cinema 952x512": [
-					952,
-					512,
-				],
-				"SD1.5 - 2:1 cinema 1024x512": [
-					1024,
-					512,
-				],
-			}
-			nodeType.prototype.onNodeCreated = function () {
-				const self = this
-				const r = onNodeCreated ? onNodeCreated.apply(this, arguments) : undefined;
-				const wRadio = this.widgets[this.widgets.findIndex((w) => w.name === "radio")]
-				const wUpscaleFactor = this.widgets[this.widgets.findIndex((w) => w.name === "upscale_factor")]
-				const wWidth = self.widgets[self.widgets.findIndex((w) => w.name === "width")]
-				const wHeight = self.widgets[self.widgets.findIndex((w) => w.name === "height")]
-				const wSwitch = this.widgets[this.widgets.findIndex((w) => w.name === "switch_width_height")]
-
-				const [width, height] = radio_list[wRadio.value]
-				const wUpscaleWidth = ComfyWidgets["INT"](this, "upscale_width", ["INT", { default: width * wUpscaleFactor.value }], app).widget
-				const wUpscaleHeight = ComfyWidgets["INT"](this, "upscale_height", ["INT", { default: height * wUpscaleFactor.value }], app).widget
-
-				function refreshSize(width = 0, height = 0) {
-					if (width > 0 || height > 0) {
-						wWidth.value = width
-						wHeight.value = height
-					}
-					wUpscaleWidth.value = wUpscaleFactor.value * wWidth.value
-					wUpscaleHeight.value = wUpscaleFactor.value * wHeight.value
-				}
-
-				function handlerSizeChange() {
-					wRadio.callback = undefined
-					wRadio.value = "自定义"
-					refreshSize(0, 0)
-					wRadio.callback = handlerRadio
-				}
-
-				function handleUpscaleFactor() {
-					refreshSize(0, 0)
-				}
-
-				function handleSwitch() {
-					let nTempWidth = wWidth.value
-					wWidth.value = wHeight.value
-					wHeight.value = nTempWidth
-
-					let nTempUpWidth = wUpscaleWidth.value
-					wUpscaleWidth.value = wUpscaleHeight.value
-					wUpscaleHeight.value = nTempUpWidth
-				}
-
-				function handlerRadio() {
-					let [width, height] = radio_list[this.value]
-					if (wSwitch.value) {
-						[width, height] = [height, width]
-					}
-					refreshSize(width, height)
-				}
-
-				wRadio.callback = handlerRadio
-				wWidth.callback = handlerSizeChange
-				wHeight.callback = handlerSizeChange
-				wUpscaleFactor.callback = handleUpscaleFactor
-				wSwitch.callback = handleSwitch
-				this.size[0] = 420
-				this.onResize?.(this.size)
-				return r
-			}
-
-		} else if (nodeData.name === "FloatSlider-NYJY") {
+		}  else if (nodeData.name === "FloatSlider-NYJY") {
 			const precisionConfig = {
 				"1": { step: 10, round: 1, precision: 0 },
 				"0.1": { step: 1, round: 0.1, precision: 1 },
@@ -211,33 +77,18 @@ app.registerExtension({
 				}
 				return r
 			}
-		} else if (nodeData.name === "JsonGetValueByKeys" || nodeData.name === "JsonDumps") {
+		}else if (["JsonGetValueByKeys", "JsonDumps", "JsonLoads", "GetItemFromList"].includes(nodeData.name)) {
+			console.log(nodeData.name)
 			const onExecuted = nodeType.prototype.onExecuted;
 			nodeType.prototype.onExecuted = function (message) {
-				console.log(message)
 				onExecuted?.apply(this, arguments);
 				if (this.widgets) {
 					const pos = this.widgets.findIndex((w) => w.name === "preview_text");
 					let w;
 					if (pos === -1) {
 						w = ComfyWidgets["STRING"](this, "preview_text", ["STRING", { multiline: true }], app).widget;
-					}
-					w.inputEl.readOnly = true;
-					w.inputEl.style.opacity = 1;
-					w.value = message["text"][0];
-				}
-				this.onResize?.(this.size);
-			}
-		}else if (["JsonGetValueByKeys", "JsonDumps", "JsonLoads"].includes(nodeData.name)) {
-			const onExecuted = nodeType.prototype.onExecuted;
-			nodeType.prototype.onExecuted = function (message) {
-				console.log(message)
-				onExecuted?.apply(this, arguments);
-				if (this.widgets) {
-					const pos = this.widgets.findIndex((w) => w.name === "preview_text");
-					let w;
-					if (pos === -1) {
-						w = ComfyWidgets["STRING"](this, "preview_text", ["STRING", { multiline: true }], app).widget;
+					} else {
+						w = this.widgets[pos];
 					}
 					w.inputEl.readOnly = true;
 					w.inputEl.style.opacity = 1;
