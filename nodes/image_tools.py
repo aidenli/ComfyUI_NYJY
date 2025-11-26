@@ -1,25 +1,47 @@
 import math
-from nodes import EmptyLatentImage
 import torch
 import comfy.model_management
 import re
 from nodes import MAX_RESOLUTION
 
-ratio_list = [
-    "SDXL - 1:1 square 1024x1024",
-    "SDXL - 2:3 portrait 832x1216",
-    "SDXL - 3:4 portrait 896x1152",
-    "SDXL - 5:8 portrait 768x1216",
-    "SDXL - 9:16 portrait 768x1344",
-    "SDXL - 9:19 portrait 704x1472",
-    "SDXL - 9:21 portrait 640x1536",
-    "SD1.5 - 1:1 square 512x512",
-    "SD1.5 - 2:3 portrait 512x768",
-    "SD1.5 - 3:4 portrait 512x682",
-    "SD1.5 - 16:9 cinema 910x512",
-    "SD1.5 - 1.85:1 cinema 952x512",
-    "SD1.5 - 2:1 cinema 1024x512",
+sdxl_ratio_list = [
+    "1:2 - 704x1408",
+    "11:21 - 704x1344",
+    "9:19 - 704x1472",
+    "4:7 - 768x1344",
+    "3:5 - 768x1280",
+    "5:8 - 768x1216",
+    "13:19 - 832x1216",
+    "13:18 - 832x1152",
+    "7:9 - 896x1152",
+    "14:17 - 896x1088",
+    "15:17 - 960x1088",
+    "15:16 - 960x1024",
+    "1:1 - 1024x1024",
+    "16:15 - 1024x960",
+    "17:15 - 1088x960",
+    "17:14 - 1088x896",
+    "9:7 - 1152x896",
+    "18:13 - 1152x832",
+    "19:13 - 1216x832",
+    "8:5 - 1216x768",
+    "5:3 - 1280x768",
+    "7:4 - 1344x768",
+    "21:11 - 1344x704",
+    "2:1 - 1408x704",
+    "23:11 - 1472x704",
+    "12:5 - 1536x640",
+    "5:2 - 1600x640",
+    "26:9 - 1664x576",
+    "3:1 - 1728x576",
 ]
+
+sdxl_ratio_list_map = {}
+for s in sdxl_ratio_list:
+    m = re.findall(r"(\d+)x(\d+)$", s)
+    if m:
+        sdxl_ratio_list_map[s] = (int(m[0][0]), int(m[0][1]))
+
 
 qwen_image_list = [
     "1:1 - 1328x1328",
@@ -51,26 +73,28 @@ class CustomLatentImageNode:
         return {
             "required": {
                 "ratio": (
-                    ["自定义"] + ratio_list,
-                    {"default": "SDXL - 2:3 portrait 832x1216"},
+                    sdxl_ratio_list,
+                    {"default": "13:19 - 832x1216"},
                 ),
                 "switch_width_height": (
                     "BOOLEAN",
                     {"default": False},
                 ),
-                "width": (
+                "width_override": (
                     "INT",
-                    {"default": 832, "step": 8, "min": 0, "max": MAX_RESOLUTION},
+                    {"default": 0, "step": 8, "min": 0, "max": MAX_RESOLUTION},
                 ),
-                "height": (
+                "height_override": (
                     "INT",
-                    {"default": 1216, "step": 8, "min": 0, "max": MAX_RESOLUTION},
+                    {"default": 0, "step": 8, "min": 0, "max": MAX_RESOLUTION},
                 ),
                 "upscale_factor": (
                     "FLOAT",
                     {
                         "default": 1,
                         "step": 0.1,
+                        "min": 0.125,
+                        "max": 100000
                     },
                 ),
                 "batch_size": (
@@ -101,10 +125,22 @@ class CustomLatentImageNode:
     CATEGORY = "NYJY"
 
     def run(
-        self, ratio, switch_width_height, width, height, upscale_factor, batch_size
+        self, ratio, switch_width_height, width_override, height_override, upscale_factor, batch_size
     ):
-        upscale_width = math.ceil(width * upscale_factor)
-        upscale_height = math.ceil(height * upscale_factor)
+        width, height = sdxl_ratio_list_map[ratio]
+        if width_override > 0:
+            width = width_override
+        if height_override > 0:
+            height = height_override
+
+        safe_factor = upscale_factor if upscale_factor > 0 else 1
+        upscale_width = min(MAX_RESOLUTION, round_to_eight(width * safe_factor))
+        upscale_height = min(MAX_RESOLUTION, round_to_eight(height * safe_factor))
+
+        if switch_width_height:
+            (width, height) = (height, width)
+            (upscale_width, upscale_height) = (upscale_height, upscale_width)
+            
         latent = torch.zeros(
             [batch_size, 4, height // 8, width // 8],
             device=comfy.model_management.intermediate_device(),
@@ -127,8 +163,8 @@ class CustomLatentImageSimpleNode:
         return {
             "required": {
                 "ratio": (
-                    ratio_list,
-                    {"default": "SDXL - 2:3 portrait 832x1216"},
+                    sdxl_ratio_list,
+                    {"default": "13:19 - 832x1216"},
                 ),
                 "switch_width_height": (
                     "BOOLEAN",
@@ -147,9 +183,7 @@ class CustomLatentImageSimpleNode:
     CATEGORY = "NYJY"
 
     def run(self, ratio, switch_width_height, batch_size):
-        extracted = re.findall(r"(\d+)x(\d+)$", ratio)
-        width = int(extracted[0][0])
-        height = int(extracted[0][1])
+        width, height = sdxl_ratio_list_map[ratio]
         if switch_width_height:
             (width, height) = (height, width)
 
@@ -159,9 +193,8 @@ class CustomLatentImageSimpleNode:
         )
         return {"result": ({"samples": latent},)}
 
-# 将数值转成可以被8整除的数值
 def round_to_eight(num):
-    return math.ceil(num / 8) * 8
+    return max(8, int(math.ceil(num / 8) * 8))
 
 class QwenLatentImageNode:
     @classmethod
