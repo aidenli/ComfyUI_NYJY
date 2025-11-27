@@ -4,7 +4,7 @@ from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, Convert
 from .nodes.logics.json_fn import JsonLoads, JsonDumps, JsonGetValueByKeys
 from .nodes.logics.array_fn import GetItemFromList
 from .nodes.number_tools import FloatSliderNode
-from .nodes.image_tools import CustomLatentImageNode, CustomLatentImageSimpleNode, QwenLatentImageNode
+from .nodes.image_tools import CustomLatentImageNode, QwenLatentImageNode
 from .nodes.civitai_prompt import CivitaiPromptNode
 from .nodes.JoyCaption.JoyCaption import (
     JoyCaptionAlpha2OnlineNode,
@@ -51,7 +51,6 @@ NODE_CLASS_MAPPINGS = {
     "JoyCaptionAlpha1Online": JoyCaptionAlpha1OnlineNode,
     "CivitaiPrompt": CivitaiPromptNode,
     "CustomLatentImage-NYJY": CustomLatentImageNode,
-    "CustomLatentImageSimple": CustomLatentImageSimpleNode,
     "FloatSlider-NYJY": FloatSliderNode,
     "GetItemFromList": GetItemFromList,
     "JsonLoads": JsonLoads,

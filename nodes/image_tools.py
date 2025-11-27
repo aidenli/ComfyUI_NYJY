@@ -67,6 +67,22 @@ qwen_image_list_map = {
     "21:9 - 2016x864": (2016, 864),
 }
 
+def round_to_eight(num):
+    return max(8, int(math.ceil(num / 8) * 8))
+
+def calculate_latent_size(ratio_size, width_override, height_override, upscale_factor):
+    width, height = ratio_size
+    if width_override > 0:
+        width = width_override
+    if height_override > 0:
+        height = height_override
+
+    safe_factor = upscale_factor if upscale_factor > 0 else 1
+    width = min(MAX_RESOLUTION, round_to_eight(width * safe_factor))
+    height = min(MAX_RESOLUTION, round_to_eight(height * safe_factor))
+
+    return width, height
+
 class CustomLatentImageNode:
     @classmethod
     def INPUT_TYPES(self):
@@ -75,10 +91,6 @@ class CustomLatentImageNode:
                 "ratio": (
                     sdxl_ratio_list,
                     {"default": "13:19 - 832x1216"},
-                ),
-                "switch_width_height": (
-                    "BOOLEAN",
-                    {"default": False},
                 ),
                 "width_override": (
                     "INT",
@@ -108,39 +120,20 @@ class CustomLatentImageNode:
         "LATENT",
         "INT",
         "INT",
-        "FLOAT",
-        "INT",
-        "INT",
     )
     RETURN_NAMES = (
         "LATENT",
         "width",
         "height",
-        "upscale_factor",
-        "upscale_width",
-        "upscale_height",
     )
     FUNCTION = "run"
     OUTPUT_NODE = True
     CATEGORY = "NYJY"
 
     def run(
-        self, ratio, switch_width_height, width_override, height_override, upscale_factor, batch_size
-    ):
-        width, height = sdxl_ratio_list_map[ratio]
-        if width_override > 0:
-            width = width_override
-        if height_override > 0:
-            height = height_override
-
-        safe_factor = upscale_factor if upscale_factor > 0 else 1
-        upscale_width = min(MAX_RESOLUTION, round_to_eight(width * safe_factor))
-        upscale_height = min(MAX_RESOLUTION, round_to_eight(height * safe_factor))
-
-        if switch_width_height:
-            (width, height) = (height, width)
-            (upscale_width, upscale_height) = (upscale_height, upscale_width)
-            
+        self, ratio, width_override, height_override, upscale_factor, batch_size
+    ):            
+        width, height = calculate_latent_size(sdxl_ratio_list_map[ratio], width_override, height_override, upscale_factor)
         latent = torch.zeros(
             [batch_size, 4, height // 8, width // 8],
             device=comfy.model_management.intermediate_device(),
@@ -150,51 +143,10 @@ class CustomLatentImageNode:
                 {"samples": latent},
                 width,
                 height,
-                upscale_factor,
-                upscale_width,
-                upscale_height,
             )
         }
 
 
-class CustomLatentImageSimpleNode:
-    @classmethod
-    def INPUT_TYPES(self):
-        return {
-            "required": {
-                "ratio": (
-                    sdxl_ratio_list,
-                    {"default": "13:19 - 832x1216"},
-                ),
-                "switch_width_height": (
-                    "BOOLEAN",
-                    {"default": False},
-                ),
-                "batch_size": (
-                    "INT",
-                    {"default": 1, "min": 1, "max": 100},
-                ),
-            }
-        }
-
-    RETURN_TYPES = ("LATENT",)
-    RETURN_NAMES = ("LATENT",)
-    FUNCTION = "run"
-    CATEGORY = "NYJY"
-
-    def run(self, ratio, switch_width_height, batch_size):
-        width, height = sdxl_ratio_list_map[ratio]
-        if switch_width_height:
-            (width, height) = (height, width)
-
-        latent = torch.zeros(
-            [batch_size, 4, height // 8, width // 8],
-            device=comfy.model_management.intermediate_device(),
-        )
-        return {"result": ({"samples": latent},)}
-
-def round_to_eight(num):
-    return max(8, int(math.ceil(num / 8) * 8))
 
 class QwenLatentImageNode:
     @classmethod
@@ -217,6 +169,15 @@ class QwenLatentImageNode:
                     "INT",
                     {"default": 0, "step": 8, "min": 0, "max": MAX_RESOLUTION},
                 ),
+                "upscale_factor": (
+                    "FLOAT",
+                    {
+                        "default": 1,
+                        "step": 0.1,
+                        "min": 0.125,
+                        "max": 100000
+                    },
+                ),
             }
         }
 
@@ -225,13 +186,8 @@ class QwenLatentImageNode:
     FUNCTION = "run"
     CATEGORY = "NYJY"
 
-    def run(self, ratio, batch_size, width_override, height_override):
-        width, height = qwen_image_list_map[ratio]
-        if width_override > 0:
-            width = width_override
-        if height_override > 0:
-            height = height_override
-            
+    def run(self, ratio, batch_size, width_override, height_override, upscale_factor):        
+        width, height = calculate_latent_size(qwen_image_list_map[ratio], width_override, height_override, upscale_factor)
         latent = torch.zeros(
             [batch_size, 4, height // 8, width // 8],
             device=comfy.model_management.intermediate_device(),

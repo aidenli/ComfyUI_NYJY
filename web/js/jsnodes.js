@@ -1,11 +1,21 @@
 import { app } from "../../../scripts/app.js";
 import { ComfyWidgets } from "../../../scripts/widgets.js"
 
+function addMenuHandler(nodeType, cb) {
+	const getOpts = nodeType.prototype.getExtraMenuOptions;
+	nodeType.prototype.getExtraMenuOptions = function () {
+		const r = getOpts.apply(this, arguments);
+		cb.apply(this, arguments);
+		return r;
+	};
+}
+
+
 app.registerExtension({
 	name: "NYJY.jsnodes",
-		async beforeRegisterNodeDef(nodeType, nodeData, app) {
-		
-		if(!nodeData?.category?.startsWith("NYJY")) {
+	async beforeRegisterNodeDef(nodeType, nodeData, app) {
+
+		if (!nodeData?.category?.startsWith("NYJY")) {
 			return;
 		}
 		if (nodeData.name === "Translate") {
@@ -28,7 +38,34 @@ app.registerExtension({
 
 				this.onResize?.(this.size);
 			}
-		}  else if (nodeData.name === "FloatSlider-NYJY") {
+		} else if (["CustomLatentImage-NYJY", "QwenLatentImage"].includes(nodeData.name)) {
+			addMenuHandler(nodeType, function (_, options) {
+				options.push({
+					content: "Swap width/height",
+					callback: () => {
+						const wRatio = this.widgets[this.widgets.findIndex((w) => w.name === "ratio")]
+						console.log(wRatio)
+						const wWidth = this.widgets[this.widgets.findIndex((w) => w.name === "width_override")]
+						const wHeight = this.widgets[this.widgets.findIndex((w) => w.name === "height_override")]
+						const oriH = wHeight.value, oriW = wWidth.value
+						wWidth.value = oriH
+						wHeight.value = oriW
+
+						if (oriH <= 0 && oriW <= 0) {
+							// swap ratio
+							const reg = /^(\d+):(\d+)\s+/
+							const match = wRatio.value.match(reg)
+							if (match) {
+								const swapItem = wRatio.options.values.find((item) => item.indexOf(`${match[2]}:${match[1]}`) > -1)
+								if (swapItem) {
+									wRatio.value = swapItem
+								}
+							}
+						}
+					},
+				});
+			});
+		} else if (nodeData.name === "FloatSlider-NYJY") {
 			const precisionConfig = {
 				"1": { step: 10, round: 1, precision: 0 },
 				"0.1": { step: 1, round: 0.1, precision: 1 },
@@ -77,8 +114,7 @@ app.registerExtension({
 				}
 				return r
 			}
-		}else if (["JsonGetValueByKeys", "JsonDumps", "JsonLoads", "GetItemFromList"].includes(nodeData.name)) {
-			console.log(nodeData.name)
+		} else if (["JsonGetValueByKeys", "JsonDumps", "JsonLoads", "GetItemFromList"].includes(nodeData.name)) {
 			const onExecuted = nodeType.prototype.onExecuted;
 			nodeType.prototype.onExecuted = function (message) {
 				onExecuted?.apply(this, arguments);
