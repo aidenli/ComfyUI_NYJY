@@ -63,9 +63,10 @@ bailian_i2v_models = [
 
 volcengine_chat_models = [
     "doubao-seed-1-6-251015",
+    "doubao-seed-1-6-flash-250828",
+    "doubao-seed-1-6-thinking-250715",
+    "doubao-1.5-vision-pro-250328",
     "doubao-seed-1-6-vision-250815",
-    "doubao-seed-1-6-flash-250828"
-    "doubao-seed-1-6-thinking-250715"
 ]
 
 volcengine_image_models = [

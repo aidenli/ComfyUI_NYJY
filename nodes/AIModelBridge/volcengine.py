@@ -117,7 +117,7 @@ class VolcengineChatNode:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "model": ("STRING", {"default": "doubao-seed-1-6-vision-250815"}),
+                "model": ("STRING", {"default": "doubao-seed-1-6-251015"}),
                 "prompt": ("STRING", {"multiline": True, "default": ""}),
             },
             "optional": {
