@@ -167,7 +167,7 @@ class VolcengineTxt2ImgNode:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "model": ("STRING", {"default": "doubao-seedream-4-0-250828"}),
+                "model": (volcengine_image_models, {"default": "doubao-seedream-4-0-250828"}),
                 "prompt": ("STRING", {"multiline": True, "default": ""}),
                 "ratio_or_size": (seedream4_image_ratio, {"default": "1:1 2048x2048"}),
                 "override_with": ("INT", {"default": 0}),
@@ -233,7 +233,7 @@ class VolcengineImg2ImgNode:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "model": ("STRING", {"default": "doubao-seedream-4-0-250828"}),
+                "model": (volcengine_image_models, {"default": "doubao-seedream-4-0-250828"}),
                 "images": ("IMAGE",),
                 "prompt": ("STRING", {"multiline": True, "default": ""}),
                 "ratio_or_size": (seedream4_image_ratio, {"default": "1:1 2048x2048"}),

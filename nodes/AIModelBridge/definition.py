@@ -70,6 +70,7 @@ volcengine_chat_models = [
 ]
 
 volcengine_image_models = [
+    "doubao-seedream-4-5-251128",
     "doubao-seedream-4-0-250828"
 ]
 
