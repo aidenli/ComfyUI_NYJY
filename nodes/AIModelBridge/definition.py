@@ -8,6 +8,9 @@ PLATFORM_CONFIGS = {
     "volcengine": {
         "base_url": "https://ark.cn-beijing.volces.com/api/v3",
     },
+    "stepfun": {
+        "base_url": "https://api.stepfun.com/v1",
+    },
     "common": {
         "base_url": "",
     }

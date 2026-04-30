@@ -1,5 +1,6 @@
 from .nodes.AIModelBridge.bailian import BailianChatNode, BailianChatOption, BailianVLOption, BailianVLNode, CommonLLMChatNode
 from .nodes.AIModelBridge.volcengine import VolcengineChatNode, VolcengineChatOption, VolcengineImageOption, VolcengineImg2ImgNode, VolcengineTxt2ImgNode,Seedream4Txt2ImgNode,Seedream4Img2ImgNode, Seedream3Txt2ImgNode, Seededit3Node, CreateSeedanceVideo
+from .nodes.AIModelBridge.stepfun import StepFunTxt2ImgNode, StepFunImgEditNode
 from .nodes.logics.strings_fn import SplitString, ConvertStringToNumber, ConvertAnyToString, ReadFileToString
 from .nodes.logics.json_fn import JsonLoads, JsonDumps, JsonGetValueByKeys, JsonGetKeys
 from .nodes.logics.array_fn import GetItemFromList, LengthOfArray
@@ -53,6 +54,8 @@ NODE_CLASS_MAPPINGS = {
     "ConvertDenoseToStep": ConvertDenoseToStep,
     # "SeedanceVideo": SeedanceVideo,
     "CreateSeedanceVideo": CreateSeedanceVideo,
+    "StepFunTxt2Img": StepFunTxt2ImgNode,
+    "StepFunImgEdit": StepFunImgEditNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {}

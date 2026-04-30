@@ -12,5 +12,8 @@
     },
     "volcengine": {
         "api_key": ""
+    },
+    "stepfun": {
+        "api_key": ""
     }
 }

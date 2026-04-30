@@ -114,6 +114,44 @@ app.registerExtension({
 				}
 				return r
 			}
+		} else if (nodeData.name === "SeedanceVideo") {
+			const onExecuted = nodeType.prototype.onExecuted;
+			nodeType.prototype.onExecuted = function (message) {
+				const prefix = 'SeedanceVideo_preview_'
+				const r = onExecuted ? onExecuted.apply(this, message) : undefined
+				console.log("source height", this.size[1])
+
+				if (!this.widgets) this.widgets = []
+
+				if (this.widgets) {
+					const pos = this.widgets.findIndex(w => w.name === `${prefix}_0`)
+					if (pos !== -1) {
+						for (let i = pos; i < this.widgets.length; i++) {
+							this.widgets[i].onRemoved?.()
+						}
+						this.widgets.length = pos
+					}
+					if (message?.videos) {
+						message.videos.forEach((params, i) => {
+							const previewUrl = '/view?' + new URLSearchParams(params).toString()
+							const w = this.addCustomWidget(
+								createPreviewElement(
+									`${prefix}_${i}`,
+									previewUrl,
+									"video"
+								)
+							)
+							console.log(w)
+							w.parent = this
+						})
+					}
+					const onRemoved = this.onRemoved
+					this.onRemoved = () => {
+						cleanupNode(this)
+						return onRemoved?.()
+					}
+				}
+			}
 		} else if (["JsonGetValueByKeys", "JsonDumps", "JsonLoads", "GetItemFromList"].includes(nodeData.name)) {
 			const onExecuted = nodeType.prototype.onExecuted;
 			nodeType.prototype.onExecuted = function (message) {
@@ -135,3 +173,108 @@ app.registerExtension({
 		}
 	}
 })
+
+const createPreviewElement = (name, val, type) => {
+	const w = {
+		name,
+		type,
+		value: val,
+		widgetWidth: 0,
+		widgetOriginalHeight: 82,
+		draw: function (ctx, node, widgetWidth) {
+			this.widgetWidth = widgetWidth
+			Object.assign(
+				this.inputEl.style,
+				get_position_style(ctx, widgetWidth - 12, this.widgetOriginalHeight)
+			)
+
+			const computedHeight = this.computeSize()[1]
+			this.parent.setSize?.([widgetWidth, computedHeight]);
+			// this.parent.graph?.setDirtyCanvas(true);
+		},
+		computeSize: function (_) {
+			const ratio = this.inputRatio || 1
+			return [this.widgetWidth, this.widgetWidth / ratio + this.widgetOriginalHeight]
+		},
+		onRemoved: function () {
+			if (this.inputEl) {
+				this.inputEl.remove()
+			}
+		}
+	}
+	w.inputEl = document.createElement('video')
+	w.inputEl.setAttribute('type', 'video/webm')
+	w.inputEl.autoplay = true
+	w.inputEl.loop = true
+	w.inputEl.controls = true
+
+	w.inputEl.addEventListener('loadeddata', () => {
+		w.inputRatio = w.inputEl.offsetWidth / w.inputEl.offsetHeight
+	});
+	document.body.appendChild(w.inputEl)
+	w.inputEl.src = w.value
+	return w
+}
+
+
+/**
+ * 获取节点在页面中的绝对定位样式
+ * @param {LGraphNode} n
+ * @param {number} offsetX - 偏移量（默认为视觉像素）
+ * @param {number} offsetY - 偏移量（默认为视觉像素）
+ * @param {Object} options
+ * @param {'visual'|'logical'} [options.offsetMode='visual'] - 偏移模式
+ */
+function get_position_style(
+	ctx,
+	widget_width,
+	y,
+) {
+	/* Create a transform that deals with all the scrolling and zooming */
+	const elRect = ctx.canvas.getBoundingClientRect()
+
+	const scaleX = elRect.width / ctx.canvas.width
+	const scaleY = elRect.height / ctx.canvas.height
+
+	const transform = new DOMMatrix()
+		.scaleSelf(scaleX, scaleY)
+		.multiplySelf(ctx.getTransform())
+		.translateSelf(6, y)
+
+	return {
+		transformOrigin: '0 0',
+		transform: transform,
+		left: `0`,
+		top: `0`,
+		cursor: 'pointer',
+		position: 'absolute',
+		maxWidth: `${widget_width}px`,
+		// maxHeight: `${node_height - MARGIN * 2}px`, // we're assuming we have the whole height of the node
+		width: `${widget_width}px`,
+		zIndex: 99
+	}
+}
+
+function hasWidgets(node) {
+	if (!node.widgets || !node.widgets?.[Symbol.iterator]) {
+		return false
+	}
+	return true
+}
+
+function cleanupNode(node) {
+	if (!hasWidgets(node)) {
+		return
+	}
+
+	for (const w of node.widgets) {
+		if (w.canvas) {
+			w.canvas.remove()
+		}
+		if (w.inputEl) {
+			w.inputEl.remove()
+		}
+		// calls the widget remove callback
+		w.onRemoved?.()
+	}
+}
