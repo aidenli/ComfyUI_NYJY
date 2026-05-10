@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from typing import Optional
+from contextlib import nullcontext
 import torch
 import torch.backends.cuda
 import torch.nn as nn
@@ -262,7 +263,12 @@ class FastCLIPAttention2(nn.Module):
         )  # (bsz, num_heads, src_len, head_dim)
 
         # Performs scale of query_states, attention, and softmax
-        with torch.backends.cuda.sdp_kernel(enable_math=False):
+        sdp_ctx = (
+            torch.backends.cuda.sdp_kernel(enable_math=False)
+            if q_states.device.type == "cuda"
+            else nullcontext()
+        )
+        with sdp_ctx:
             x = F.scaled_dot_product_attention(
                 q_states, k_states, v_states
             )  # (bsz, num_heads, tgt_len, head_dim)
@@ -1092,7 +1098,12 @@ class ViTBlock(nn.Module):
             .transpose(1, 2)
         )  # (bsz, num_heads, src_len, embed_dim // num_heads)
 
-        with torch.backends.cuda.sdp_kernel(enable_math=False):
+        sdp_ctx = (
+            torch.backends.cuda.sdp_kernel(enable_math=False)
+            if q_states.device.type == "cuda"
+            else nullcontext()
+        )
+        with sdp_ctx:
             out = F.scaled_dot_product_attention(
                 q_states, k_states, v_states
             )  # (bsz, num_heads, tgt_len, head_dim)

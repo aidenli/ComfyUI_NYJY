@@ -10,6 +10,7 @@ import os
 import numpy as np
 import json
 import re
+from contextlib import nullcontext
 import folder_paths
 import shutil
 from ..utils import print_log
@@ -87,19 +88,25 @@ class JoyTagNode:
         return image_tensor
 
     def predict(self, image: Image.Image, threshold):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = VisionModel.load_model(self.clip_model_path)
         model.eval()
-        model = model.to("cuda")
+        model = model.to(device)
 
         with open(os.path.join(self.clip_model_path, "top_tags.txt"), "r") as f:
             top_tags = [line.strip() for line in f.readlines() if line.strip()]
 
         image_tensor = self.prepare_image(image, model.image_size)
         batch = {
-            "image": image_tensor.unsqueeze(0).to("cuda"),
+            "image": image_tensor.unsqueeze(0).to(device),
         }
 
-        with torch.amp.autocast_mode.autocast("cuda", enabled=True):
+        autocast_ctx = (
+            torch.amp.autocast_mode.autocast("cuda", enabled=True)
+            if device.type == "cuda"
+            else nullcontext()
+        )
+        with autocast_ctx:
             preds = model(batch)
             tag_preds = preds["tags"].sigmoid().cpu()
 
